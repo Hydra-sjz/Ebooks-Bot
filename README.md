@@ -1,6 +1,6 @@
 # Ebooks Bot
 
-*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [pdfdrive.com](https://pdfdrive.com) to Telegram chat*
+*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [pdfdrive.com](https://pdfdrive.com) to Telegram*
 
 ---
 
