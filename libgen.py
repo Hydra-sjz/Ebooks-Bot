@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 
 wrongimage = "https://w7.pngwing.com/pngs/389/161/png-transparent-sign-symbol-x-mark-check-mark-christian-cross-symbol-miscellaneous-angle-logo-thumbnail.png"
 
-
 def getDownLink(book):
     res = LibGen.resolve_download_links(book)
     data = []
