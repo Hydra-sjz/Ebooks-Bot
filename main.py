@@ -25,7 +25,7 @@ def getdata(msgid):
 
 @app.on_message(filters.command(["start"]))
 def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
-    app.send_message(message.chat.id,f"__Hello {message.from_user.mention}, I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from pdfdrive.com and LibraryGenesis to right here.__", reply_to_message_id=message.id,)
+    app.send_message(message.chat.id,f"__Hello {message.from_user.mention}, I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from [PdfDrive](https://pdfdrive.com) and [Library Genesis](https://libgen.li/) to right here.__", reply_to_message_id=message.id,)
 
 
 @app.on_message(filters.text)

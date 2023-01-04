@@ -1,6 +1,8 @@
 # Ebooks Bot
 
-*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [pdfdrive.com](https://pdfdrive.com) and LibraryGenesis to Telegram*
+*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [PdfDrive](https://pdfdrive.com) and [Library Genesis](https://libgen.li/) to Telegram*
+
+*Experience the bot at [@eBooooksBot](https://t.me/ebooooksbot)*
 
 ---
 
