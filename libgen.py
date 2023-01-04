@@ -21,8 +21,11 @@ def imgValid(url):
     else: return wrongimage
 
 def getBookImg(book):
-    link = book["Mirror_1"]
-    r = get(link)
-    soup = BeautifulSoup(r.text,"html.parser")
-    src = soup.find("img").get("src")
-    return imgValid("https://libgen.rs" + src)
+    try:
+        link = book["Mirror_1"]
+        r = get(link)
+        soup = BeautifulSoup(r.text,"html.parser")
+        src = soup.find("img").get("src")
+        return imgValid("https://libgen.rs" + src)
+    except:
+        return wrongimage
