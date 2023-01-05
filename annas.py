@@ -26,7 +26,7 @@ def getAnnasBooks(searchbook):
     }
     params = {'q': searchbook}
     response = get('https://annas-archive.org/search', params=params, headers=headers)
-
+    print(response.text)
     soups = BeautifulSoup(response.content,"html.parser")
     soups = soups.findAll("div",class_="mb-4")
     print(soups)
