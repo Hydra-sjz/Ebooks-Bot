@@ -119,7 +119,7 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
         #  next
         choose = int(call.data) % len(books)
         app.edit_message_media(call.message.chat.id, call.message.id,
-            InputMediaPhoto(books[choose].link,
+            InputMediaPhoto(libgen.imgValid(books[choose].link),
             f'**{books[choose].title}**\n\n__Year: {books[choose].year}\nSize: {books[choose].size}\nPages: {books[choose].pages}\nDownloads: {books[choose].downloads}__'),
             reply_markup=getButtons(choose))
 
