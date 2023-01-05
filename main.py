@@ -7,11 +7,13 @@ import getbooks
 import requests
 import libgen
 
+
 bot_token = os.environ.get("TOKEN", "") 
 api_hash = os.environ.get("HASH", "") 
 api_id = os.environ.get("ID", "")
 app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
 wrongimage = "https://w7.pngwing.com/pngs/389/161/png-transparent-sign-symbol-x-mark-check-mark-christian-cross-symbol-miscellaneous-angle-logo-thumbnail.png"
+
 
 data = {}
 site = {}
@@ -22,6 +24,14 @@ def storedata(msgid,books,website):
 def getdata(msgid):
     return data.get(msgid,None), site.get(msgid,None)
 
+def getButtons(choose=0):
+    return InlineKeyboardMarkup(
+                        [[
+                            InlineKeyboardButton( text='⬅️', callback_data=str(choose-1)),
+                            InlineKeyboardButton( text='✅', callback_data=f'D{choose}'),
+                            InlineKeyboardButton( text='➡️', callback_data=str(choose+1))
+                        ]])
+                        
 
 @app.on_message(filters.command(["start"]))
 def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
@@ -44,6 +54,7 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
 
     # site selection
     if "pdfdrive" in call.data or "librarygenesis" in call.data:
+        app.answer_callback_query(call.id,"processing...")
         data = call.data.split()
         message = app.get_messages(data[1], int(data[2]))
         search = message.text
@@ -51,36 +62,26 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
         # pdfdrive
         if data[0] == "pdfdrive":
             books = getbooks.getpage(search)
-            if not len(books) >= 1:
+            if len(books) == 0:
                 app.send_message(message.chat.id,f"__No results found__", reply_to_message_id=message.id)
             else:
                 msg = app.send_photo(message.chat.id, books[0].link,
                     f'**{books[0].title}**\n\n__Year: {books[0].year}\nSize: {books[0].size}\nPages: {books[0].pages}\nDownloads: {books[0].downloads}__',
-                    reply_to_message_id=message.id,
-                    reply_markup=InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton( text='⬅️', callback_data="-1"),
-                            InlineKeyboardButton( text='✅', callback_data="D0"),
-                            InlineKeyboardButton( text='➡️', callback_data="+1")
-                        ]]))
+                    reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"pdfdrive")
         
         # librarygenesis
         elif data[0] == "librarygenesis":
             books = libgen.getBooks(search)
-            if not len(books) >= 1:
+            if len(books) == 0:
                 app.send_message(message.chat.id,f"__No results found__", reply_to_message_id=message.id)
             else:
                 msg = app.send_photo(message.chat.id, libgen.getBookImg(books[0]),
                     f'**{books[0]["Title"]}**\n\n__Author: {books[0]["Author"]}\nPublisher: {books[0]["Publisher"]}\nYear: {books[0]["Year"]}\nSize: {books[0]["Size"]}\nPages: {books[0]["Pages"]}\nLanguage: {books[0]["Language"]}\nExtension: {books[0]["Extension"]}__',
-                    reply_to_message_id=message.id,
-                    reply_markup=InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton( text='⬅️', callback_data="-1"),
-                            InlineKeyboardButton( text='✅', callback_data="D0"),
-                            InlineKeyboardButton( text='➡️', callback_data="+1")
-                        ]]))
+                    reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"librarygenesis")
+        
+        # end
         return
 
 
@@ -120,17 +121,13 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(books[choose].link,
             f'**{books[choose].title}**\n\n__Year: {books[choose].year}\nSize: {books[choose].size}\nPages: {books[choose].pages}\nDownloads: {books[choose].downloads}__'),
-            reply_markup=InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton( text='⬅️', callback_data=str(choose-1)),
-                            InlineKeyboardButton( text='✅', callback_data=f'D{choose}'),
-                            InlineKeyboardButton( text='➡️', callback_data=str(choose+1))
-                        ]]))
+            reply_markup=getButtons(choose))
+
 
     # librarygenesis
     if website == "librarygenesis":
 
-            # download
+        # download
         if call.data[0] == "D":
             choose = int(call.data.replace("D",""))
             app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
@@ -161,12 +158,7 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(libgen.getBookImg(books[choose]),
             f'**{books[choose]["Title"]}**\n\n__Author: {books[choose]["Author"]}\nPublisher: {books[choose]["Publisher"]}\nYear: {books[choose]["Year"]}\nSize: {books[choose]["Size"]}\nPages: {books[choose]["Pages"]}\nLanguage: {books[choose]["Language"]}\nExtension: {books[choose]["Extension"]}__'),
-            reply_markup=InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton( text='⬅️', callback_data=str(choose-1)),
-                            InlineKeyboardButton( text='✅', callback_data=f'D{choose}'),
-                            InlineKeyboardButton( text='➡️', callback_data=str(choose+1))
-                        ]]))
+            reply_markup=getButtons(choose))
             
             
     
