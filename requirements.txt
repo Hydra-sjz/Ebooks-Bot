@@ -3,4 +3,4 @@ bs4
 pyrogram
 tgcrypto
 libgen-api
-flask
+cloudscraper

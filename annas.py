@@ -1,10 +1,12 @@
-from requests import get
+#from requests import get
 from bs4 import BeautifulSoup
 from pyrogram.types import InputMediaPhoto, InputMediaDocument, CallbackQuery
 from pyrogram import Client
 from buttons import getButtons
 from os import remove
+import cloudscraper
 
+req = cloudscraper.create_scraper()
 
 def getAnnasBooks(searchbook):
     headers = {
@@ -25,12 +27,10 @@ def getAnnasBooks(searchbook):
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
     }
     params = {'q': searchbook}
-    response = get('https://annas-archive.org/search', params=params, headers=headers)
+    response = req.get('https://annas-archive.org/search', params=params, headers=headers)
     print(response.text)
     soups = BeautifulSoup(response.content,"html.parser")
-    soups = soups.findAll("div",class_="mb-4")
-    print(soups)
-    soups = soups[-1].findAll("div",class_="h-[125]")
+    soups = soups.findAll("div",class_="mb-4")[-1].findAll("div",class_="h-[125]")
     books = []
 
     for soup in soups:
@@ -54,7 +54,7 @@ def getAnnasBooks(searchbook):
 
 
 def getDownLinks(book):
-    res = get(book["link"])
+    res = req.get(book["link"])
     soup = BeautifulSoup(res.content,"html.parser")
     soup = soup.find("div",class_="mb-4 p-6 overflow-hidden bg-[#0000000d] break-words").findAll("a")
     links = []
@@ -81,7 +81,7 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             i = 0
             while i<len(links):
                 print(links[i])
-                res = get(links[i])
+                res = req.get(links[i])
                 if res.status_code == 200: break
                 else: i += 1
             
@@ -94,7 +94,7 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             with open(filename, "wb") as file:
                 file.write(res.content)
 
-            res = get(books[choose]["cover"])
+            res = req.get(books[choose]["cover"])
             thumbfile = f"{books[choose]['title']}"
             thumbfile = "".join( x for x in thumbfile if (x.isalnum() or x in "_ ")) + ".jpg"
             with open(thumbfile, "wb") as file:
