@@ -13,7 +13,6 @@ def getAnnasBooks(searchbook):
     'accept-language': 'en-US,en;q=0.9',
     'cache-control': 'max-age=0',
     'dnt': '1',
-    'if-modified-since': 'Sun, 01 Jan 2023 12:57:10 GMT',
     'referer': 'https://annas-archive.org/',
     'sec-ch-ua': '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
     'sec-ch-ua-mobile': '?0',
@@ -27,8 +26,11 @@ def getAnnasBooks(searchbook):
     }
     params = {'q': searchbook}
     response = get('https://annas-archive.org/search', params=params, headers=headers)
+
     soups = BeautifulSoup(response.content,"html.parser")
-    soups = soups.findAll("div",class_="mb-4")[-1].findAll("div",class_="h-[125]")
+    soups = soups.findAll("div",class_="mb-4")
+    print(soups)
+    soups = soups[-1].findAll("div",class_="h-[125]")
     books = []
 
     for soup in soups:
