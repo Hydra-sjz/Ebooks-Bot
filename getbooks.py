@@ -119,8 +119,3 @@ def getdownlink(book):
     
     print(durl)
     return durl
-
-
-# res = requests.get("https://www.pdfdrive.com/download.pdf?id=18072226&h=cfdd99c2dc200983f7f6273c8c31efed&u=cache&ext=pdf")
-# if res.text == "file not exist":
-#     print(1)

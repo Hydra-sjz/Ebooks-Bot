@@ -125,7 +125,7 @@ def inbtwn(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
             reply_markup=getButtons(choose))
         except:
             app.edit_message_media(call.message.chat.id, call.message.id,
-            InputMediaPhoto(wrongimage,
+            InputMediaPhoto(books[choose].coverlink,
             f'**{books[choose].title}**\n\n__Year: {books[choose].year}\nSize: {books[choose].size}\nPages: {books[choose].pages}\nDownloads: {books[choose].downloads}__'),
             reply_markup=getButtons(choose))
 
