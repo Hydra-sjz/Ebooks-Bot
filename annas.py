@@ -7,6 +7,8 @@ from os import remove
 
 
 def getAnnasBooks(searchbook):
+    print(get("https://ebook-hunter.org/").text)
+
     headers = {
     'authority': 'annas-archive.org',
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -108,3 +110,6 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(books[choose]["cover"],getAnnasText(books,choose)),
             reply_markup=getButtons(choose))
+
+
+
