@@ -59,7 +59,7 @@ def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_an
 def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
 
     # site selection
-    if isSite():
+    if isSite(call.data):
         app.answer_callback_query(call.id,"processing...")
         data = call.data.split()
         message:pyrogram.types.messages_and_media.message.Message = app.get_messages(data[1], int(data[2]))
