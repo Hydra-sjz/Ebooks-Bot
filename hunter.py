@@ -26,7 +26,7 @@ def getHunterBooks(searchterm):
                 "extension" : info[0],
                 "language" : info[1],
                 "date" : info[2],
-                "author" : info[3]
+                "author" : info[3].repalce("Author:","")
             }
         books.append(book)
 
