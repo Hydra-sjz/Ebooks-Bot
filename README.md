@@ -1,6 +1,6 @@
 # Ebooks Bot
 
-*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [PdfDrive](https://pdfdrive.com), [Library Genesis](https://libgen.li/) and [Anna's Archive](https://annas-archive.org/) to Telegram*
+*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [PdfDrive](https://pdfdrive.com), [Library Genesis](https://libgen.li/), [eBook-Hunter](https://ebook-hunter.org/) and [Anna's Archive](https://annas-archive.org/) to Telegram*
 
 *Experience the bot at [@eBooooksBot](https://t.me/ebooooksbot)*
 

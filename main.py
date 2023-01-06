@@ -6,6 +6,7 @@ from buttons import getButtons
 import pdfdrive
 import libgen
 import annas
+import hunter
 
 
 bot_token = os.environ.get("TOKEN", "") 
@@ -23,12 +24,23 @@ def storedata(msgid,books,website):
 
 def getdata(msgid):
     return data.get(msgid,None), site.get(msgid,None)
-                        
+                    
+sites =  ["pdfdrive","librarygenesis","annas","hunter"]
+def isSite(calldata):
+    for ele in sites:
+        if ele in calldata: return True
+    return False
+
 
 @app.on_message(filters.command(["start"]))
 def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
     app.send_message(message.chat.id,
-        f"__Hello {message.from_user.mention}, I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from [PdfDrive](https://pdfdrive.com), [Library Genesis](https://libgen.li/) and [Anna's Archive](https://annas-archive.org/) to right here.__",
+        f"__Hello {message.from_user.mention}, \
+I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from \
+[PdfDrive](https://pdfdrive.com), \
+[Library Genesis](https://libgen.li/), \
+[eBook-Hunter](https://ebook-hunter.org/) \
+and [Anna's Archive](https://annas-archive.org/) to right here.__",
         reply_to_message_id=message.id, disable_web_page_preview=True)
 
 
@@ -36,8 +48,9 @@ def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
     app.send_message(message.chat.id, '__choose website to get result from__', reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(
                 [
-                    [InlineKeyboardButton( text='PDF Drive', callback_data=f"pdfdrive {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Library Genesis', callback_data=f"librarygenesis {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='PDF Drive', callback_data=f"pdfdrive {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='eBook Hunter', callback_data=f"hunter {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Annas Archive', callback_data=f"annas {message.chat.id} {message.id}")]
                 ]))
     
@@ -46,7 +59,7 @@ def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_an
 def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
 
     # site selection
-    if "pdfdrive" in call.data or "librarygenesis" in call.data or "annas" in call.data:
+    if isSite():
         app.answer_callback_query(call.id,"processing...")
         data = call.data.split()
         message:pyrogram.types.messages_and_media.message.Message = app.get_messages(data[1], int(data[2]))
@@ -89,6 +102,16 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
                     annas.getAnnasText(books), reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"annas")
         
+        # ebook hunter
+        elif data[0] == "hunter":
+            books = hunter.getHunterBooks(search)
+            if len(books) == 0:
+                app.send_message(message.chat.id,f"__No results found__", reply_to_message_id=message.id)
+            else:
+                msg = app.send_photo(message.chat.id, books[0]["cover"],
+                    hunter.getHuntText(books), reply_to_message_id=message.id, reply_markup=getButtons())
+                storedata(msg.id,books,"hunter")
+        
         # end
         return
 
@@ -109,6 +132,10 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
     # annas
     elif website == "annas":
         annas.handleAnnas(app,call,books)
+    
+    # annas
+    elif website == "hunter":
+        hunter.handleHunt(app,call,books)
             
 
 # infinty polling
