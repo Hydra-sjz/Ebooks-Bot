@@ -10,24 +10,35 @@ def getAnnasBooks(searchbook):
     params = {'q': searchbook}
     response = get('https://annas-archive.org/search', params=params)
     soups = BeautifulSoup(response.content,"html.parser")
-    soups = soups.findAll("div",class_="mb-4")[-1].findAll("div",class_="h-[125]")
+    try: soups = soups.findAll("div",class_="mb-4")[-1].findAll("div",class_="h-[125]")
+    except: return None
     books = []
 
     for soup in soups:
         soup = BeautifulSoup(str(soup).replace("<!--","").replace("-->",""),"html.parser")
         info = soup.find("div",class_="relative top-[-1] pl-4 grow overflow-hidden")
         desc = info.find("div",class_="truncate text-xs text-gray-500").text.split(",")
-        book = {
-                "link" : 'https://annas-archive.org' + soup.find("a").get("href"),
-                "cover" : soup.find("img").get("src"),
-                "title" : info.find("div",class_="truncate text-xl font-bold").text,
-                "publisher" : info.find("div",class_="truncate text-sm").text,
-                "author" : info.find("div",class_="truncate italic").text,
-                "language" : desc[0],
-                "extension" : desc[1][1:],
-                "size" : desc[2][1:],
-                "filename" : desc[3].replace('"',"")[1:]
-            }
+
+        book = {}
+        try: book["link"] = 'https://annas-archive.org' + soup.find("a").get("href")
+        except: pass
+        try: book["cover"] = soup.find("img").get("src")
+        except: pass
+        try: book["title"] =  info.find("h3",class_="truncate text-xl font-bold").text
+        except: book["title"] = "annas"
+        try: book["publisher"] = info.find("div",class_="truncate text-sm").text
+        except: pass
+        try: book["author"] = info.find("div",class_="truncate italic").text
+        except: pass
+        try: book["language"] = desc[0]
+        except: pass
+        try: book["extension"] = desc[1][1:]
+        except: pass
+        try: book["size"] = desc[2][1:]
+        except: pass
+        try: book["filename"] = desc[3].replace('"',"")[1:]
+        except: pass
+
         books.append(book)
 
     return books
@@ -47,7 +58,20 @@ def getDownLinks(book):
 
 
 def getAnnasText(books,choose=0):
-    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nPublisher: {books[choose]["publisher"]}\nSize: {books[choose]["size"]}\nLanguage: {books[choose]["language"]}\nExtension: {books[choose]["extension"]}__'
+    text = ""
+    try: text += f'**{books[choose]["title"]}**\n\n'
+    except: pass
+    try: text += f'__Author: {books[choose]["author"]}\n'
+    except: text += '__'
+    try: text += f'Publisher: {books[choose]["publisher"]}\n'
+    except: pass
+    try: text += f'Size: {books[choose]["size"]}\n'
+    except: pass
+    try: text += f'Language: {books[choose]["language"]}\n'
+    except: pass
+    try: text += f'Extension: {books[choose]["extension"]}__'
+    except: text += '__'
+    return text + "\n\n------[Annas Archive]------"
 
 
 def handleAnnas(app:Client,call:CallbackQuery,books):

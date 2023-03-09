@@ -41,7 +41,7 @@ def getDlink(book):
 
 
 def getHuntText(books,choose=0):
-    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nDate: {books[choose]["date"]}\nLanguage: {books[choose]["language"]}\nExtension: {books[choose]["extension"]}__'
+    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nDate: {books[choose]["date"]}\nLanguage: {books[choose]["language"]}\nExtension: {books[choose]["extension"]}__' + "\n\n------[Ebook Hunter]------"
 
 
 def handleHunt(app:Client,call:CallbackQuery,books):

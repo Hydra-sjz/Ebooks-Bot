@@ -123,7 +123,7 @@ def getdownlink(book):
 
 
 def getPdfText(books,choose=0):
-    return f'**{books[choose].title}**\n\n__Year: {books[choose].year}\nSize: {books[choose].size}\nPages: {books[choose].pages}\nDownloads: {books[choose].downloads}__'
+    return f'**{books[choose].title}**\n\n__Year: {books[choose].year}\nSize: {books[choose].size}\nPages: {books[choose].pages}\nDownloads: {books[choose].downloads}__' + "\n\n------[PDFdrive]------"
 
 def handlePdfdrive(app:Client,call:CallbackQuery,books:list[searchedbookinfo]):
 
