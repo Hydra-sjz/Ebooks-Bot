@@ -270,7 +270,7 @@ def handleZlib(Z: Zlibrary, app:Client,call:CallbackQuery,books):
             app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['title']}**"))
             remove(filename)
             remove(thumbfile)
-            return
+            return True
 
         #  next
         app.answer_callback_query(call.id,"dont click anything until it respond...")
@@ -282,3 +282,4 @@ def handleZlib(Z: Zlibrary, app:Client,call:CallbackQuery,books):
             InputMediaPhoto(thumbfile,getZlibText(books,choose)),
             reply_markup=getButtons(choose))
         remove(thumbfile)
+        return False

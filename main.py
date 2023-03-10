@@ -29,13 +29,19 @@ if Z and not Z.isLogin(): raise("Wrong Credentials")
 
 data = {}
 site = {}
+Null = "Null"
 def storedata(msgid,books,website):
     data[msgid] = books
     site[msgid] = website
 
 def getdata(msgid):
     return data.get(msgid,None), site.get(msgid,None)
-                    
+
+def removedata(msgid):
+    data[msgid] = Null
+    site[msgid] = Null
+
+
 sites =  [
             "pdfdrive",
             "librarygenesis",
@@ -153,30 +159,36 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
 
     # check for validity
     books, website = getdata(call.message.id)
+    if books == Null and website == Null: return
     if books == None:
         app.edit_message_media(call.message.chat.id, call.message.id, InputMediaPhoto(wrongimage, "__Out of Date, Search Again__"))
         return
 
+    if call.data[0] == "D": removedata(call.message.id)
+    downloded = False
+
     # pdfdrive
     if website == "pdfdrive":
-        pdfdrive.handlePdfdrive(app,call,books)
+        downloded = pdfdrive.handlePdfdrive(app,call,books)
 
     # librarygenesis
     elif website == "librarygenesis":
-        libgen.handleLibGen(app,call,books)
+        downloded = libgen.handleLibGen(app,call,books)
     
     # annas
     elif website == "annas":
-        annas.handleAnnas(app,call,books)
+        downloded = annas.handleAnnas(app,call,books)
     
     # hunter
     elif website == "hunter":
-        hunter.handleHunt(app,call,books)
+        downloded = hunter.handleHunt(app,call,books)
 
     # zlibraray
     elif website == "zlib":
-        zlibrary.handleZlib(Z,app,call,books)
+        downloded = zlibrary.handleZlib(Z,app,call,books)
 
+    # if downloded: 
+    #     removedata(call.message.id)
 
 # infinty polling
 app.run()

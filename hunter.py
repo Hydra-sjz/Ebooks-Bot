@@ -51,10 +51,11 @@ def handleHunt(app:Client,call:CallbackQuery,books):
             choose = int(call.data.replace("D",""))
             link = getDlink(books[choose])                
             app.edit_message_text(call.message.chat.id, call.message.id, f'**{books[choose]["title"]}**\n\n__External Link : {link}__')
-            return
+            return True
 
         #  next
         choose = int(call.data) % len(books)
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(books[choose]["cover"],getHuntText(books,choose)),
             reply_markup=getButtons(choose))
+        return False

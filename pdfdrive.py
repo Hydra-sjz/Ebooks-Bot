@@ -146,7 +146,7 @@ def handlePdfdrive(app:Client,call:CallbackQuery,books:list[searchedbookinfo]):
             app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose].title}**"))
             remove(filename)
             remove(thumbfile)
-            return
+            return True
 
         #  next
         choose = int(call.data) % len(books)
@@ -158,3 +158,4 @@ def handlePdfdrive(app:Client,call:CallbackQuery,books:list[searchedbookinfo]):
             app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(books[choose].coverlink,getPdfText(books,choose)),
             reply_markup=getButtons(choose))
+        return False

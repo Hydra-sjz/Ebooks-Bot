@@ -55,7 +55,7 @@ def handleLibGen(app:Client,call:CallbackQuery,books):
             
             if i == len(books):
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Failed__")
-                return 
+                return True
 
             filename = f"{books[choose]['Title']}"
             filename = "".join( x for x in filename if (x.isalnum() or x in "_ ")) + f".{books[choose]['Extension']}"
@@ -72,10 +72,11 @@ def handleLibGen(app:Client,call:CallbackQuery,books):
             app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['Title']}**"))
             remove(filename)
             remove(thumbfile)
-            return
+            return True
 
         #  next
         choose = int(call.data) % len(books)
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(getBookImg(books[choose]),getLibText(books,choose)),
             reply_markup=getButtons(choose))
+        return False

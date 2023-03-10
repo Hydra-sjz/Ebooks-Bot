@@ -91,7 +91,7 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             
             if i == len(books):
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Failed__")
-                return 
+                return True
 
             filename = f"{books[choose]['title']}"
             filename = "".join( x for x in filename if (x.isalnum() or x in "_ ")) + f".{books[choose]['extension']}"
@@ -108,13 +108,13 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['title']}**"))
             remove(filename)
             remove(thumbfile)
-            return
+            return True
 
         #  next
         choose = int(call.data) % len(books)
         app.edit_message_media(call.message.chat.id, call.message.id,
             InputMediaPhoto(books[choose]["cover"],getAnnasText(books,choose)),
             reply_markup=getButtons(choose))
-
+        return False
 
 
