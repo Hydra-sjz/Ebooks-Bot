@@ -3,3 +3,8 @@ bs4
 pyrogram
 tgcrypto
 libgen-api
+
+pycryptodomex==3.17
+oscrypto==1.3.0
+lxml==4.9.2
+charset-normalizer
