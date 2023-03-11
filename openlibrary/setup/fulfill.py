@@ -12,9 +12,9 @@ import os, time, shutil
 import zipfile
 from lxml import etree
 
-from setup.libadobe import sendHTTPRequest_DL2FILE
-from setup.libadobeFulfill import buildRights, fulfill
-from setup.libpdf import patch_drm_into_pdf
+from openlibrary.setup.libadobe import sendHTTPRequest_DL2FILE
+from openlibrary.setup.libadobeFulfill import buildRights, fulfill
+from openlibrary.setup.libpdf import patch_drm_into_pdf
 
 #######################################################################
 
@@ -26,7 +26,7 @@ def download(replyData):
     adNS = lambda tag: '{%s}%s' % ('http://ns.adobe.com/adept', tag)
     adDC = lambda tag: '{%s}%s' % ('http://purl.org/dc/elements/1.1/', tag)
 
-    # print (replyData)
+    # # print (replyData)
 
     download_url = adobe_fulfill_response.find("./%s/%s/%s" % (adNS("fulfillmentResult"), adNS("resourceItemInfo"), adNS("src"))).text
     resource_id = adobe_fulfill_response.find("./%s/%s/%s" % (adNS("fulfillmentResult"), adNS("resourceItemInfo"), adNS("resource"))).text
@@ -35,7 +35,7 @@ def download(replyData):
     rights_xml_str = buildRights(license_token_node)
 
     if (rights_xml_str is None):
-        print("Building rights.xml failed!")
+        # print("Building rights.xml failed!")
         return False
 
     book_name = None
@@ -58,11 +58,11 @@ def download(replyData):
     dl_start_time = int(time.time() * 1000)
     ret = sendHTTPRequest_DL2FILE(download_url, filename_tmp)
     dl_end_time = int(time.time() * 1000)
-    print()
-    print("Download took %d milliseconds" % (dl_end_time - dl_start_time))
+    # print()
+    # print("Download took %d milliseconds" % (dl_end_time - dl_start_time))
 
     if (ret != 200):
-        print("Download failed with error %d" % (ret))
+        # print("Download failed with error %d" % (ret))
         return False
 
     with open(filename_tmp, "rb") as f:
@@ -71,10 +71,10 @@ def download(replyData):
     filetype = ".bin"
     
     if (book_content.startswith(b"PK")):
-        print("That's a ZIP file -> EPUB")
+        # print("That's a ZIP file -> EPUB")
         filetype = ".epub"
     elif (book_content.startswith(b"%PDF")):
-        print("That's a PDF file")
+        # print("That's a PDF file")
         filetype = ".pdf"
 
     filename = book_name + filetype
@@ -85,12 +85,12 @@ def download(replyData):
         zf = zipfile.ZipFile(filename, "a")
         zf.writestr("META-INF/rights.xml", rights_xml_str)
         zf.close()
-        print()
-        print("File successfully fulfilled")
+        # print()
+        # print("File successfully fulfilled")
         return filename
     
     elif filetype == ".pdf":
-        print("Successfully downloaded PDF, patching encryption ...")
+        # print("Successfully downloaded PDF, patching encryption ...")
 
         adobe_fulfill_response = etree.fromstring(rights_xml_str)
         NSMAP = { "adept" : "http://ns.adobe.com/adept" }
@@ -101,31 +101,33 @@ def download(replyData):
         ret = patch_drm_into_pdf("tmp_" + filename, rights_xml_str, filename, resource)
         os.remove("tmp_" + filename)
         if (ret):
-            print()
-            print("File successfully fulfilled")
+            # print()
+            # print("File successfully fulfilled")
             return filename
         else: 
-            print("Errors occurred while patching " + filename)
+            # print("Errors occurred while patching " + filename)
             return False
 
     else: 
-        print("Error: Weird filetype")
+        # print("Error: Weird filetype")
         return False
 
 
 def downloadFile(file="URLLink.acsm"):
 
-    print("Fulfilling book '" + file + "' ...")
+    # print("Fulfilling book '" + file + "' ...")
     success, replyData = fulfill(file)
     if (success is False):
-        print()
-        print("Hey, that didn't work!")
-        print(replyData)
+        # print()
+        # print("Hey, that didn't work!")
+        # print(replyData)
+        pass
     else: 
-        print()
-        print("Downloading book '" + file + "' with download link")
+        # print()
+        # print("Downloading book '" + file + "' with download link")
         success = download(replyData)
         if (success is False):
-            print("That didn't work!")
+            # print("That didn't work!")
+            pass
         else:
             return success

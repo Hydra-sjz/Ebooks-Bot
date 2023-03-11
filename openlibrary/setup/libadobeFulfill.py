@@ -5,10 +5,10 @@ import time
 
 #@@CALIBRE_COMPAT_CODE@@
 
-from setup.libadobe import addNonce, sign_node, get_cert_from_pkcs12, sendRequestDocu, sendRequestDocuRC, sendHTTPRequest
-from setup.libadobe import get_devkey_path, get_device_path, get_activation_xml_path
-from setup.libadobe import VAR_VER_SUPP_VERSIONS, VAR_VER_HOBBES_VERSIONS
-from setup.libadobe import VAR_VER_BUILD_IDS, VAR_VER_USE_DIFFERENT_NOTIFICATION_XML_ORDER
+from openlibrary.setup.libadobe import addNonce, sign_node, get_cert_from_pkcs12, sendRequestDocu, sendRequestDocuRC, sendHTTPRequest
+from openlibrary.setup.libadobe import get_devkey_path, get_device_path, get_activation_xml_path
+from openlibrary.setup.libadobe import VAR_VER_SUPP_VERSIONS, VAR_VER_HOBBES_VERSIONS
+from openlibrary.setup.libadobe import VAR_VER_BUILD_IDS, VAR_VER_USE_DIFFERENT_NOTIFICATION_XML_ORDER
 
  
 def buildFulfillRequest(acsm):
@@ -150,7 +150,7 @@ def getDecryptedCert(pkcs12_b64_string = None):
     pkcs12_data = base64.b64decode(pkcs12_b64_string)
 
     try: 
-        from setup.libadobe import devkey_bytes as devkey_adobe
+        from openlibrary.setup.libadobe import devkey_bytes as devkey_adobe
     except: 
         pass
 
@@ -173,7 +173,7 @@ def buildAuthRequest():
 
     my_cert = getDecryptedCert()
     if my_cert is None: 
-        print("Can't decrypt pkcs12 with devkey!")
+        # print("Can't decrypt pkcs12 with devkey!")
         return None
 
 
@@ -245,7 +245,7 @@ def operatorAuth(operatorURL):
 
         for member in operator_url_list:
             if member.text.strip() == operatorURL:
-                #print("Already authenticated to operator")
+                ## print("Already authenticated to operator")
                 return None
     except:
         pass
@@ -309,10 +309,10 @@ def buildRights(license_token_node):
         pass
 
     if not found:
-        print("Did not find the licenseService certificate in the activation data.")
-        print("This usually means it failed to download from the distributor's servers.")
-        print("Please try to download an ACSM book from the Adobe Sample Library, then if that was successful, ")
-        print("try your ACSM book file again.")
+        # print("Did not find the licenseService certificate in the activation data.")
+        # print("This usually means it failed to download from the distributor's servers.")
+        # print("Please try to download an ACSM book from the Adobe Sample Library, then if that was successful, ")
+        # print("try your ACSM book file again.")
         return None
 
     ret += "</adept:licenseServiceInfo>\n"
@@ -350,7 +350,7 @@ def fulfill(acsm_file, do_notify = False):
     except: 
         return False, "ACSM not found or invalid"
 
-    #print(etree.tostring(acsmxml, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
+    ## print(etree.tostring(acsmxml, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
 
     adNS = lambda tag: '{%s}%s' % ('http://ns.adobe.com/adept', tag)
     dcNS = lambda tag: '{%s}%s' % ('http://purl.org/dc/elements/1.1/', tag)
@@ -359,14 +359,15 @@ def fulfill(acsm_file, do_notify = False):
         mimetype = acsmxml.find("./%s/%s/%s" % (adNS("resourceItemInfo"), adNS("metadata"), dcNS("format"))).text
 
         if (mimetype == "application/pdf"):
-            #print("You're trying to fulfill a PDF file.")
+            ## print("You're trying to fulfill a PDF file.")
             pass
         elif (mimetype == "application/epub+zip"):
-            #print("Trying to fulfill an EPUB file ...")
+            ## print("Trying to fulfill an EPUB file ...")
             pass
         else: 
-            print("Weird mimetype: %s" % (mimetype))
-            print("Continuing anyways ...")
+            pass
+            # print("Weird mimetype: %s" % (mimetype))
+            # print("Continuing anyways ...")
         
     except: 
         # Some books, like from Google Play books, use a different format and don't have that metadata tag.
@@ -376,8 +377,9 @@ def fulfill(acsm_file, do_notify = False):
     fulfill_request, adept_ns = buildFulfillRequest(acsmxml)
 
     if verbose_logging:
-        print("Fulfill request:")
-        print(fulfill_request)
+        pass
+        # print("Fulfill request:")
+        # print(fulfill_request)
 
     fulfill_request_xml = etree.fromstring(fulfill_request)
     # Sign the request:
@@ -418,8 +420,8 @@ def fulfill(acsm_file, do_notify = False):
         # ADE 1.7.2
         fulfill_req_signed = etree.tostring(fulfill_request_xml, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8")
 
-    #print("will send:\n %s" % fulfill_req_signed)
-    #print("Sending fulfill request to %s" % fulfillURL)
+    ## print("will send:\n %s" % fulfill_req_signed)
+    ## print("Sending fulfill request to %s" % fulfillURL)
 
     # For debugging only
     # fulfillURL = fulfillURL.replace("https:", "http:")
@@ -441,8 +443,9 @@ def fulfill(acsm_file, do_notify = False):
             return False, "Looks like there's been an error during Fulfillment: %s" % replyData
 
     if verbose_logging:
-        print("fulfillmentResult:")
-        print(replyData)
+        pass
+        # print("fulfillmentResult:")
+        # print(replyData)
 
     adobe_fulfill_response = etree.fromstring(replyData)
     NSMAP = { "adept" : "http://ns.adobe.com/adept" }
@@ -452,16 +455,19 @@ def fulfill(acsm_file, do_notify = False):
 
     if adept_ns:
         if do_notify:
-            print("Notifying server ...")
+            # print("Notifying server ...")
             success, response = performFulfillmentNotification(adobe_fulfill_response)
             if not success: 
-                print("Some errors occurred during notify: ")
-                print(response)
-                print("The book was probably still downloaded correctly.")
+                pass
+                # print("Some errors occurred during notify: ")
+                # print(response)
+                # print("The book was probably still downloaded correctly.")
         else:
-            print("Not notifying any server since that was disabled.")
+            pass
+            # print("Not notifying any server since that was disabled.")
     else: 
-        print("Skipping notify, not supported properly with ADE 1.7.2")
+        pass
+        # print("Skipping notify, not supported properly with ADE 1.7.2")
 
 
     is_returnable = False
@@ -481,8 +487,8 @@ def fulfill(acsm_file, do_notify = False):
     success, response = fetchLicenseServiceCertificate(licenseURL, operatorURL)
 
     if success is False: 
-        print("Why did the license download fail?")
-        print("This is probably a temporary error on the distributor's server")
+        # print("Why did the license download fail?")
+        # print("This is probably a temporary error on the distributor's server")
         return False, response
 
     return True, replyData
@@ -498,17 +504,17 @@ def updateLoanReturnData(fulfillmentResultToken, forceTestBehaviour=False):
     try: 
         fulfillment_id = fulfillmentResultToken.find("./%s/%s/%s/%s" % (adNS("fulfillmentResult"), adNS("resourceItemInfo"), adNS("licenseToken"), adNS("fulfillment"))).text
         if (fulfillment_id is None):
-            print("Fulfillment ID not found, can't generate loan token")
+            # print("Fulfillment ID not found, can't generate loan token")
             return False
 
     except: 
-        print("Loan token error")
+        # print("Loan token error")
         return False
 
     try: 
         operatorURL = fulfillmentResultToken.find("./%s/%s/%s/%s" % (adNS("fulfillmentResult"), adNS("resourceItemInfo"), adNS("licenseToken"), adNS("operatorURL"))).text
     except: 
-        print("OperatorURL missing")
+        # print("OperatorURL missing")
         return False
     
 
@@ -529,11 +535,11 @@ def updateLoanReturnData(fulfillmentResultToken, forceTestBehaviour=False):
     try: 
         dsp_until = display.find("./%s" % (adNS("until"))).text
     except: 
-        print("error with DSP")
+        # print("error with DSP")
         return False
 
     if (dsp_until is None):
-        print("No validUntil thing")
+        # print("No validUntil thing")
         return False
 
     
@@ -567,7 +573,7 @@ def addLoanRecordToConfigFile(new_loan_record):
         import calibre_plugins.deacsm.prefs as prefs     # type: ignore
         deacsmprefs = prefs.ACSMInput_Prefs()
     except: 
-        print("Exception while reading config file")
+        # print("Exception while reading config file")
         return False
 
 
@@ -578,9 +584,10 @@ def addLoanRecordToConfigFile(new_loan_record):
     while True: 
 
         if error_counter >= 10: 
-            print("Took us 10 attempts to acquire loan token lock, still didn't work.")
-            print("(still the same token %s)" % (deacsmprefs["loan_identifier_token"]))
-            print("If you see this error message please open a bug report.")
+            pass
+            # print("Took us 10 attempts to acquire loan token lock, still didn't work.")
+            # print("(still the same token %s)" % (deacsmprefs["loan_identifier_token"]))
+            # print("If you see this error message please open a bug report.")
 
 
         # "Mark" the current access with a random token, to prevent multiple instances
@@ -592,21 +599,21 @@ def addLoanRecordToConfigFile(new_loan_record):
             deacsmprefs.commit()
             deacsmprefs.refresh()
             if random_identifier != deacsmprefs["loan_identifier_token"]:
-                #print("we broke another thread's token, try again")
+                ## print("we broke another thread's token, try again")
                 last_token = deacsmprefs["loan_identifier_token"]
                 error_counter = error_counter + 1
                 continue
         else: 
             if last_token != deacsmprefs["loan_identifier_token"]:
-                #print("Token changed in the meantime ...")
+                ## print("Token changed in the meantime ...")
                 # Give it another 5 tries
                 error_counter = max(0, error_counter - 5)
                 pass
 
             last_token = deacsmprefs["loan_identifier_token"]
-            #print("waiting on another thread ...")
+            ## print("waiting on another thread ...")
             sleeptime = random.randrange(2, 10) / 1000
-            print(str(sleeptime))
+            # print(str(sleeptime))
             time.sleep(sleeptime)
             error_counter = error_counter + 1
             continue
@@ -634,8 +641,8 @@ def addLoanRecordToConfigFile(new_loan_record):
         deacsmprefs.commit()
         deacsmprefs.refresh()
         if deacsmprefs["loan_identifier_token"] != random_identifier:
-            print("Another thread stole the loan token while we were working with it - that's not supposed to happen ...")
-            print("If you see this message, please open a bug report.")
+            # print("Another thread stole the loan token while we were working with it - that's not supposed to happen ...")
+            # print("If you see this message, please open a bug report.")
             return False
 
         deacsmprefs.set("loan_identifier_token", 0)
@@ -662,7 +669,7 @@ def tryReturnBook(bookData):
         device = bookData["device"]
         operatorURL = bookData["operatorURL"]
     except: 
-        print("Invalid book data!")
+        # print("Invalid book data!")
         return False, "Invalid book data"
 
 
@@ -682,32 +689,35 @@ def tryReturnBook(bookData):
 
     signature = sign_node(full_text_xml)
     if (signature is None):
-        print("SIGN ERROR!")
+        # print("SIGN ERROR!")
         return False, "Sign error"
 
     etree.SubElement(full_text_xml, etree.QName(NSMAP["adept"], "signature")).text = signature
 
-    print("Notifying loan return server %s" % (operatorURL + "/LoanReturn"))
+    # print("Notifying loan return server %s" % (operatorURL + "/LoanReturn"))
     doc_send = "<?xml version=\"1.0\"?>\n" + etree.tostring(full_text_xml, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8")
     if verbose_logging:
-        print(doc_send)
+        pass
+        # print(doc_send)
 
 
     retval = sendRequestDocu(doc_send, operatorURL + "/LoanReturn").decode("utf-8")
 
     if "<error" in retval: 
-        print("Loan return failed: %s" % (retval))
+        # print("Loan return failed: %s" % (retval))
         return False, retval
     elif "<envelope" in retval: 
-        print("Loan return successful")
+        # print("Loan return successful")
         if verbose_logging:
-            print(retval)
+            pass
+            # print(retval)
         bl, txt = performFulfillmentNotification(etree.fromstring(retval), True, user=user, device=device)
         if not bl: 
-            print("Error while notifying of book return. Book's probably still been returned properly.")
+            pass
+            # print("Error while notifying of book return. Book's probably still been returned properly.")
         return True, retval
     else: 
-        print("Invalid loan return response: %s" % (retval))
+        # print("Invalid loan return response: %s" % (retval))
         return False, retval
 
 
@@ -726,7 +736,7 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
     adNS = lambda tag: '{%s}%s' % ('http://ns.adobe.com/adept', tag)
 
     # Debug output for PassHash testing: 
-    # print(etree.tostring(fulfillmentResultToken, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
+    # # print(etree.tostring(fulfillmentResultToken, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
 
     try: 
         notifiers = fulfillmentResultToken.findall("./%s/%s" % (adNS("fulfillmentResult"), adNS("notify")))
@@ -746,8 +756,8 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
             pass
 
     if len(notifiers) == 0:
-        print("<notify> tag not found. Guess nobody wants to be notified.")
-        #print(etree.tostring(fulfillmentResultToken, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
+        # print("<notify> tag not found. Guess nobody wants to be notified.")
+        ## print(etree.tostring(fulfillmentResultToken, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8"))
         return True, ""
     
 
@@ -763,9 +773,10 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
 
         if element.get("critical", "yes") == "no":
             critical = False
-            print("Notifying optional server %s" % (url))
+            # print("Notifying optional server %s" % (url))
         else: 
-            print("Notifying server %s" % (url))
+            pass
+            # print("Notifying server %s" % (url))
         
 
         if (user is None):
@@ -775,8 +786,8 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
             except AttributeError:
                 # B&N Adobe PassHash fulfillment. Doesn't use notifications usually ...
                 #user = body.find("./%s" % (adNS("user"))).text
-                print("Skipping notify due to passHash?")
-                print("If this is not a passHash book pls open a bug report.")
+                # print("Skipping notify due to passHash?")
+                # print("If this is not a passHash book pls open a bug report.")
                 continue
         
         if (device is None):
@@ -784,8 +795,8 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
                 # "Normal" Adobe fulfillment
                 device = fulfillmentResultToken.find("./%s/%s/%s/%s" % (adNS("fulfillmentResult"), adNS("resourceItemInfo"), adNS("licenseToken"), adNS("device"))).text
             except:
-                print("Missing deviceID for loan metadata ... why?")
-                print("Reading from device.xml instead.")
+                # print("Missing deviceID for loan metadata ... why?")
+                # print("Reading from device.xml instead.")
                 # Lets try to read this from the activation ...
                 activationxml = etree.parse(get_activation_xml_path())
                 device = activationxml.find("./%s/%s" % (adNS("activationToken"), adNS("device"))).text
@@ -832,29 +843,30 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
 
         signature = sign_node(full_text_xml)
         if (signature is None):
-            print("SIGN ERROR!")
+            # print("SIGN ERROR!")
             continue
 
         etree.SubElement(full_text_xml, etree.QName(NSMAP["adept"], "signature")).text = signature
 
         doc_send = "<?xml version=\"1.0\"?>\n" + etree.tostring(full_text_xml, encoding="utf-8", pretty_print=True, xml_declaration=False).decode("utf-8")
         
-        # Debug: Print notify request
+        # Debug: # print notify request
         if (verbose_logging):
-            print("Notify payload XML:")
-            print(doc_send)
+            pass
+            # print("Notify payload XML:")
+            # print(doc_send)
 
         try: 
             code, msg = sendRequestDocuRC(doc_send, url)
         except:
             if not critical:
-                print("There was an error during an optional fulfillment notification:")
+                # print("There was an error during an optional fulfillment notification:")
                 import traceback
                 traceback.print_exc()
-                print("Continuing execution ...")
+                # print("Continuing execution ...")
                 continue
             else:
-                print("Error during critical notification:")
+                # print("Error during critical notification:")
                 raise
 
         try: 
@@ -863,21 +875,26 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
             pass
 
         if verbose_logging:
-            print("MSG:")
-            print(msg)
+            pass
+            # print("MSG:")
+            # print(msg)
 
         if "<error" in msg: 
-            print("Fulfillment notification error: %s" % (msg))
+            pass
+            # print("Fulfillment notification error: %s" % (msg))
             errmsg += "ERROR\n" + url + "\n" + msg + "\n\n"
             if critical:
                 errmsg_crit += "ERROR\n" + url + "\n" + msg + "\n\n"
 
         elif "<success" in msg: 
-            print("Fulfillment notification successful.")
+            pass
+            # print("Fulfillment notification successful.")
         elif code == 204:
-            print("Fulfillment notification successful (204).")
+            pass
+            # print("Fulfillment notification successful (204).")
         else: 
-            print("Weird Fulfillment Notification response: %s" % (msg))
+            pass
+            # print("Weird Fulfillment Notification response: %s" % (msg))
             errmsg += "ERROR\n" + url + "\n" + msg + "\n\n"
             if critical:
                 errmsg_crit += "ERROR\n" + url + "\n" + msg + "\n\n"
@@ -885,7 +902,7 @@ def performFulfillmentNotification(fulfillmentResultToken, forceOptional = False
 
     if device is None and errmsg_crit != "":
         errmsg_crit = ""
-        print("Skipping critical notification failure due to weird book.")
+        # print("Skipping critical notification failure due to weird book.")
         
 
     if errmsg_crit == "": 
@@ -940,7 +957,7 @@ def fetchLicenseServiceCertificate(licenseURL, operatorURL):
         return False, "Looks like that failed: %s" % response
 
 
-    #print(response)
+    ## print(response)
 
     responseXML = etree.fromstring(response)
 

@@ -5,14 +5,14 @@
 This is an experimental Python version of libgourou. 
 '''
 
-from setup.libadobe import createDeviceKeyFile, FILE_DEVICEKEY, FILE_DEVICEXML, FILE_ACTIVATIONXML
-from setup.libadobeAccount import createDeviceFile, createUser, signIn, activateDevice, exportAccountEncryptionKeyDER, getAccountUUID
+from openlibrary.setup.libadobe import createDeviceKeyFile, FILE_DEVICEKEY, FILE_DEVICEXML, FILE_ACTIVATIONXML
+from openlibrary.setup.libadobeAccount import createDeviceFile, createUser, signIn, activateDevice, exportAccountEncryptionKeyDER, getAccountUUID
 from os.path import exists
 
 VAR_MAIL = ""
 VAR_PASS = ""
 VAR_VER = 1 # None # 1 for ADE2.0.1, 2 for ADE3.0.1
-from decrypt.params import KEYPATH
+from openlibrary.decrypt.params import KEYPATH
 
 #################################################################
 

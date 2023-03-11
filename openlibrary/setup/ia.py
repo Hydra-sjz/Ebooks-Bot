@@ -1,4 +1,5 @@
-from charset_normalizer import md__mypyc
+try: from charset_normalizer import md__mypyc
+except: pass
 from os import path, mkdir
 from requests import Session
 import random

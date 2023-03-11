@@ -1,6 +1,6 @@
 # Ebooks Bot
 
-*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [PdfDrive](https://pdfdrive.com), [Library Genesis](https://libgen.li/), [eBook-Hunter](https://ebook-hunter.org/), [Anna's Archive](https://annas-archive.org/) and [Zlibrary](http://z-lib.org/) to Telegram*
+*This is Ebooks Finder Bot, Just send a name of the Book and It will get you results from [PdfDrive](https://pdfdrive.com), [Library Genesis](https://libgen.li/), [eBook-Hunter](https://ebook-hunter.org/), [Anna's Archive](https://annas-archive.org/) and [Zlibrary](http://z-lib.org/) + Decrypts ACSM file borrowded from OpenLibrary/InternetArchive to Telegram*
 
 *Experience the bot at [@eBooooksBot](https://t.me/ebooooksbot)*
 

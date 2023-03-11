@@ -11,7 +11,7 @@
 Decrypt Adobe Digital Editions encrypted ePub books.
 """
 
-from decrypt.params import KEYPATH
+from openlibrary.decrypt.params import KEYPATH
 __license__ = 'GPL v3'
 __version__ = "8.0"
 
@@ -21,7 +21,7 @@ import traceback
 import base64
 import zlib
 from zipfile import ZipInfo, ZipFile, ZIP_STORED, ZIP_DEFLATED
-from decrypt.zeroedzipinfo import ZeroedZipInfo
+from openlibrary.decrypt.zeroedzipinfo import ZeroedZipInfo
 from contextlib import closing
 from lxml import etree
 from uuid import UUID
@@ -196,7 +196,7 @@ def decryptBook(userkey, inpath, outpath):
         namelist = inf.namelist()
         if 'META-INF/rights.xml' not in namelist or \
            'META-INF/encryption.xml' not in namelist:
-            print("{0:s} is DRM-free.".format(os.path.basename(inpath)))
+            # print("{0:s} is DRM-free.".format(os.path.basename(inpath)))
             return 1
         for name in META_NAMES:
             namelist.remove(name)
@@ -208,13 +208,17 @@ def decryptBook(userkey, inpath, outpath):
             bookkey = bookkeyelem.text
             keytype = bookkeyelem.attrib.get('keyType', '0')
             if len(bookkey) >= 172 and int(keytype, 10) > 2:
-                print("{0:s} is a secure Adobe Adept ePub with hardening.".format(os.path.basename(inpath)))
+                pass
+                # print("{0:s} is a secure Adobe Adept ePub with hardening.".format(os.path.basename(inpath)))
             elif len(bookkey) == 172:
-                print("{0:s} is a secure Adobe Adept ePub.".format(os.path.basename(inpath)))
+                pass
+                # print("{0:s} is a secure Adobe Adept ePub.".format(os.path.basename(inpath)))
             elif len(bookkey) == 64:
-                print("{0:s} is a secure Adobe PassHash (B&N) ePub.".format(os.path.basename(inpath)))
+                pass
+                # print("{0:s} is a secure Adobe PassHash (B&N) ePub.".format(os.path.basename(inpath)))
             else:
-                print("{0:s} is not an Adobe-protected ePub!".format(os.path.basename(inpath)))
+                pass
+                # print("{0:s} is not an Adobe-protected ePub!".format(os.path.basename(inpath)))
                 return 1
 
             if len(bookkey) != 64:
@@ -229,7 +233,7 @@ def decryptBook(userkey, inpath, outpath):
                     bookkey = None
 
                 if bookkey is None:
-                    print("Could not decrypt {0:s}. Wrong key".format(os.path.basename(inpath)))
+                    # print("Could not decrypt {0:s}. Wrong key".format(os.path.basename(inpath)))
                     return 2
             else:
                 # Adobe PassHash / B&N
@@ -257,7 +261,7 @@ def decryptBook(userkey, inpath, outpath):
                         # Check if there's still something in there
                         if (decryptor.check_if_remaining()):
                             data = decryptor.get_xml()
-                            print("Adding encryption.xml for the remaining embedded files.")
+                            # print("Adding encryption.xml for the remaining embedded files.")
                             # We removed DRM, but there's still stuff like obfuscated fonts.
                         else:
                             continue
@@ -295,7 +299,7 @@ def decryptBook(userkey, inpath, outpath):
                     else:
                         outf.writestr(zi, decryptor.decrypt(path, data))
         except:
-            print("Could not decrypt {0:s} because of an exception:\n{1:s}".format(os.path.basename(inpath), traceback.format_exc()))
+            # print("Could not decrypt {0:s} because of an exception:\n{1:s}".format(os.path.basename(inpath), traceback.format_exc()))
             return 2
     return 0
 
@@ -306,8 +310,8 @@ def decryptEPUB(inpath):
     userkey = open(keypath,'rb').read()
     result = decryptBook(userkey, inpath, outpath)
     if result == 0:
-        print("Successfully decrypted")
+        # print("Successfully decrypted")
         return outpath
     else:
-        print("Decryption failed")
+        # print("Decryption failed")
         return None

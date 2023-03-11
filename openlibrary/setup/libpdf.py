@@ -112,12 +112,12 @@ def find_ebx(filename_in):
         i = i + 1
         if "/EBX_HANDLER/" in line:
             find_ebx_end = int(time.time() * 1000)
-            print("Found EBX after %d attempts - took %d ms" % (i, find_ebx_end - find_ebx_start))
-            print()
+            # print("Found EBX after %d attempts - took %d ms" % (i, find_ebx_end - find_ebx_start))
+            # print()
             return line
 
     find_ebx_end = int(time.time() * 1000)
-    print("Error: Did not find EBX_HANDLER - took %d ms" % (find_ebx_end - find_ebx_start))
+    # print("Error: Did not find EBX_HANDLER - took %d ms" % (find_ebx_end - find_ebx_start))
     return None
 
 def find_enc(filename_in):
@@ -134,15 +134,16 @@ def find_enc(filename_in):
         if is_encrypt_normal or is_encrypt_odd:
 
             find_enc_end = int(time.time() * 1000)
-            print("Found ENC after %d attempts - took %d ms" % (i, find_enc_end - find_enc_start))
+            # print("Found ENC after %d attempts - took %d ms" % (i, find_enc_end - find_enc_start))
             if is_encrypt_odd:
-                print("Odd formatting of encryption blob?")
-                print("If this doesn't work correctly please open a bug report.")
+                pass
+                # print("Odd formatting of encryption blob?")
+                # print("If this doesn't work correctly please open a bug report.")
                 
             return line
     
     find_enc_end = int(time.time() * 1000)
-    print("Error: Did not find ENC - took %d ms" % (find_enc_end - find_enc_start))
+    # print("Error: Did not find ENC - took %d ms" % (find_enc_end - find_enc_start))
     return None
 
 
@@ -161,20 +162,20 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
     fl = open(filename_in, "rb")
     br = BackwardReader(fl)
 
-    print("Searching for startxref ...")
+    # print("Searching for startxref ...")
     for line in br.readlines():
         trailer_idx += 1
         trailer = line + "\n" + trailer
 
-        #print ("LINE: " + line)
+        ## print ("LINE: " + line)
 
         if (trailer_idx > 10):
-            print("Took more than 10 attempts to find startxref ...")
+            # print("Took more than 10 attempts to find startxref ...")
             return False
         
         if (line == "startxref"):
             startxref_offset = int(prevline)
-            print("Got startxref: %d" % (startxref_offset))            
+            # print("Got startxref: %d" % (startxref_offset))            
             break
         prevline = line
 
@@ -188,7 +189,7 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
 
     encrypt = find_enc(filename_in)
     if encrypt is None:
-        print("Error, enc not found")
+        # print("Error, enc not found")
         return False
 
     line_split = encrypt.split(' ')
@@ -211,25 +212,25 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
     ebx_elem = find_ebx(filename_in)
     
     if (ebx_elem is None):
-        print("Err: EBX is None")
+        # print("Err: EBX is None")
         return False
 
     
-    print("Encryption handler:")
-    print(encrypt)
-    print()
-    print("EBX handler:")
-    print(ebx_elem)
-    print()
+    # print("Encryption handler:")
+    # print(encrypt)
+    # print()
+    # print("EBX handler:")
+    # print(ebx_elem)
+    # print()
 
     encrypt = trim_encrypt_string(encrypt)
-    print("Trimmed encryption handler:")
-    print(encrypt)
-    print()
+    # print("Trimmed encryption handler:")
+    # print(encrypt)
+    # print()
 
     ebx_elem = update_ebx_with_keys(ebx_elem, adept_license_string, ebx_bookid)
-    print("Updated EBX handler not logged due to sensitive data")
-    #print(ebx_elem)
+    # print("Updated EBX handler not logged due to sensitive data")
+    ## print(ebx_elem)
 
     filesize_str = str(os.path.getsize(filename_in))
     filesize_pad = filesize_str.zfill(10)
@@ -253,7 +254,7 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
         if elem.startswith("Prev"):
             did_prev = True
             additional_data += "Prev " + str(startxref_offset)
-            #print("Replacing prev from '%s' to '%s'" % (elem, "Prev " + startxref))
+            ## print("Replacing prev from '%s' to '%s'" % (elem, "Prev " + startxref))
         else:
             additional_data += cleanup_encrypt_element(elem)
         additional_data += "/"
@@ -262,13 +263,13 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
         # remove two >> at end
         additional_data = additional_data[:-3]
         additional_data += "/Prev " + str(startxref_offset) + ">>" + "/"
-        #print("Faking Prev %s" % startxref)
+        ## print("Faking Prev %s" % startxref)
 
     additional_data = additional_data[:-1]
 
     additional_data += "\r" + "startxref\r" + str(ptr) + "\r" + "%%EOF"
 
-    #print("Appending DRM data: %s" % (additional_data))
+    ## print("Appending DRM data: %s" % (additional_data))
 
 
     inp = open(filename_in, "rb")
@@ -281,6 +282,6 @@ def patch_drm_into_pdf(filename_in, adept_license_string, filename_out, ebx_book
 
     drm_end_time = int(time.time() * 1000)
 
-    print("Whole DRM patching took %d milliseconds." % (drm_end_time - drm_start_time))
-    print()
+    # print("Whole DRM patching took %d milliseconds." % (drm_end_time - drm_start_time))
+    # print()
     return True

@@ -31,7 +31,7 @@ except ImportError:
 #@@CALIBRE_COMPAT_CODE@@
 
 
-from setup.customRSA import CustomRSA
+from openlibrary.setup.customRSA import CustomRSA
 
 from oscrypto import keys
 from oscrypto.asymmetric import dump_certificate, dump_private_key
@@ -40,7 +40,7 @@ from oscrypto.asymmetric import dump_certificate, dump_private_key
 VAR_ACS_SERVER_HTTP = "http://adeactivate.adobe.com/adept"
 VAR_ACS_SERVER_HTTPS = "https://adeactivate.adobe.com/adept"
 
-from setup.params import FILE_DEVICEKEY, FILE_DEVICEXML, FILE_ACTIVATIONXML 
+from openlibrary.setup.params import FILE_DEVICEKEY, FILE_DEVICEXML, FILE_ACTIVATIONXML 
 
 # Lists of different ADE "versions" we know about
 VAR_VER_SUPP_CONFIG_NAMES = [ "ADE 1.7.2", "ADE 2.0.1", "ADE 3.0.1", "ADE 4.0.3", "ADE 4.5.10", "ADE 4.5.11" ]
@@ -95,8 +95,8 @@ def are_ade_version_lists_valid():
         fail = True
     
     if fail:
-        print("Internal error in ACSM Input: Mismatched version list lenghts.")
-        print("This should never happen, please open a bug report.")
+        # print("Internal error in ACSM Input: Mismatched version list lenghts.")
+        # print("This should never happen, please open a bug report.")
         return False
     
     return True
@@ -174,7 +174,7 @@ def makeSerial(random):
 
     # Original implementation: std::string Device::makeSerial(bool random)
 
-    # It doesn't look like this implementation results in the same fingerprint Adobe is using in ADE.
+    # It doesn't look like this implementation results in the same finger# print Adobe is using in ADE.
     # Given that Adobe only ever sees the SHA1 hash of this value, that probably doesn't matter.
 
     sha_out = None
@@ -210,9 +210,9 @@ def makeSerial(random):
 def makeFingerprint(serial):
     # type: (str) -> str
 
-    # Original implementation: std::string Device::makeFingerprint(const std::string& serial)
+    # Original implementation: std::string Device::makeFinger# print(const std::string& serial)
     # base64(sha1(serial + privateKey))
-    # Fingerprint must be 20 bytes or less.
+    # Finger# print must be 20 bytes or less.
 
     global devkey_bytes
     if devkey_bytes is None: 
@@ -260,7 +260,7 @@ def sendHTTPRequest_DL2FILE(URL, outputfile):
     total_size = int(handler.headers.get("Content-Length", 0))
     bytes_so_far = 0
 
-    print()
+    # print()
     with open(outputfile, "wb") as f:
         while True: 
             chunk = handler.read(chunksize)
@@ -276,6 +276,7 @@ def sendHTTPRequest_DL2FILE(URL, outputfile):
             percent = round(progress * 100, 2)
             print("Downloaded %d of %d bytes %s %0.2f%%" % (bytes_so_far, total_size, progress_bar, percent), end='\r')
 
+    print()
     return 200
 
 def sendHTTPRequest_getSimple(URL):
@@ -334,7 +335,7 @@ def sendPOSTHTTPRequest(URL, document, type, returnRC = False):
     # Python returns an error when it encounters such a URL, so just add that prefix if it's not present. 
 
     if not "://" in URL:
-        print("Provider is using malformed URL %s, fixing." % (URL))
+        # print("Provider is using malformed URL %s, fixing." % (URL))
         URL = "http://" + URL
 
     req = ulib.Request(url=URL, headers=headers, data=document)
@@ -342,7 +343,7 @@ def sendPOSTHTTPRequest(URL, document, type, returnRC = False):
         handler = ulib.urlopen(req, context=ctx)
     except uliberror.HTTPError as err: 
         # This happens with HTTP 500 and related errors.
-        print("Post request caused HTTPError %d" % (err.code))
+        # print("Post request caused HTTPError %d" % (err.code))
         if returnRC:
             return err.code, "Post request caused HTTPException"
         else:
@@ -350,7 +351,7 @@ def sendPOSTHTTPRequest(URL, document, type, returnRC = False):
 
     except uliberror.URLError as err: 
         # This happens if the hostname cannot be resolved.
-        print("Post request failed with URLError")
+        # print("Post request failed with URLError")
         if returnRC:
             return 900, "Post request failed with URLError"
         else: 
@@ -360,7 +361,8 @@ def sendPOSTHTTPRequest(URL, document, type, returnRC = False):
     if (ret_code == 204 and returnRC):
         return 204, ""
     if (ret_code != 200):
-        print("Post request returned something other than 200 - returned %d" % (ret_code))
+        pass
+        # print("Post request returned something other than 200 - returned %d" % (ret_code))
 
     content = handler.read()
 
@@ -497,7 +499,7 @@ def sign_node(node):
     sha_hash = hash_node(node)
     sha_hash = sha_hash.digest()
 
-    # print("Hash is " + sha_hash.hex())
+    # # print("Hash is " + sha_hash.hex())
 
     global devkey_bytes
     global pkcs12
@@ -526,7 +528,7 @@ def sign_node(node):
     signature = base64.b64encode(block).decode()
 
     # Debug
-    # print("sig is %s\n" % block.hex())
+    # # print("sig is %s\n" % block.hex())
 
     return signature
 
@@ -558,8 +560,9 @@ def hash_node_ctx(node, hash_ctx):
         if (qtag.namespace == "http://ns.adobe.com/adept"):
             # Adobe HMAC and signature are not hashed
             return
-        else: 
-            print("Warning: Found hmac or signature node in unexpected namespace " + qtag.namespace)
+        else:
+            pass
+            # print("Warning: Found hmac or signature node in unexpected namespace " + qtag.namespace)
 
     hash_do_append_tag(hash_ctx, ASN_NS_TAG)
 
@@ -615,7 +618,7 @@ def hash_node_ctx(node, hash_ctx):
             while True: 
                 remaining = textlen - done
                 if remaining > 0x7fff:
-                    #print("Warning: Why are we hashing a node larger than 32k?")
+                    ## print("Warning: Why are we hashing a node larger than 32k?")
                     remaining = 0x7fff
 
                 hash_do_append_tag(hash_ctx, ASN_TEXT)

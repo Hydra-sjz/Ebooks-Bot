@@ -13,7 +13,7 @@
 Decrypts Adobe ADEPT-encrypted PDF files.
 """
 
-from decrypt.params import KEYPATH
+from openlibrary.decrypt.params import KEYPATH
 __license__ = 'GPL v3'
 __version__ = "10.0.4"
 
@@ -668,7 +668,7 @@ class PSStackParser(PSBaseParser):
                 try:
                     (pos, objs) = self.end_type('d')
                     if len(objs) % 2 != 0:
-                        print("Incomplete dictionary construct")
+                        # print("Incomplete dictionary construct")
                         objs.append("") # this isn't necessary.
                         # temporary fix. is this due to rental books?
                         # raise PSSyntaxError(
@@ -1184,7 +1184,7 @@ class PDFDocument(object):
     #   with the document.
     def initialize(self, password=b'', inept=True):
         if not self.encryption:
-            self.is_printable = self.is_modifiable = self.is_extractable = True
+            self.is_# printable = self.is_modifiable = self.is_extractable = True
             self.ready = True
             raise PDFEncryptionError('Document is not encrypted.')
             return
@@ -1203,7 +1203,7 @@ class PDFDocument(object):
 
     def initialize_and_return_filter(self):
         if not self.encryption:
-            self.is_printable = self.is_modifiable = self.is_extractable = True
+            self.is_# printable = self.is_modifiable = self.is_extractable = True
             self.ready = True
             return None
 
@@ -1223,7 +1223,7 @@ class PDFDocument(object):
         # nice little offline principal keys dictionary
         # global static principal key for German Onleihe / Bibliothek Digital
         principalkeys = { b'bibliothek-digital.de': codecs.decode(b'rRwGv2tbpKov1krvv7PO0ws9S436/lArPlfipz5Pqhw=','base64')}
-        self.is_printable = self.is_modifiable = self.is_extractable = True
+        self.is_# printable = self.is_modifiable = self.is_extractable = True
         length = int_value(param.get('Length', 0)) // 8
         edcdata = str_value(param.get('EDCData')).decode('base64')
         pdrllic = str_value(param.get('PDRLLic')).decode('base64')
@@ -1477,7 +1477,7 @@ class PDFDocument(object):
         # check owner pass:
         retval = self.check_owner_password(password, docid, param)
         if retval is True or (retval is not False and retval is not None):
-            #print("Owner pass is valid")
+            ## print("Owner pass is valid")
             if retval is True:
                 self.decrypt_key = self.recover_encryption_key_with_password(password, docid, param)
             else:
@@ -1487,7 +1487,7 @@ class PDFDocument(object):
             # That's not the owner password. Check if it's the user password.
             retval = self.check_user_password(password, docid, param)
             if retval is True or (retval is not False and retval is not None):
-                #print("User pass is valid")
+                ## print("User pass is valid")
                 if retval is True:
                     self.decrypt_key = self.recover_encryption_key_with_password(password, docid, param)
                 else:
@@ -1499,14 +1499,14 @@ class PDFDocument(object):
 
         P = int_value(param['P'])
 
-        self.is_printable = bool(P & 4)
+        self.is_# printable = bool(P & 4)
         self.is_modifiable = bool(P & 8)
         self.is_extractable = bool(P & 16)
         self.is_annotationable = bool(P & 32)
         self.is_formsenabled = bool(P & 256)
         self.is_textextractable = bool(P & 512)
         self.is_assemblable = bool(P & 1024)
-        self.is_formprintable = bool(P & 2048)
+        self.is_form# printable = bool(P & 2048)
 
 
         # genkey method
@@ -1554,7 +1554,7 @@ class PDFDocument(object):
 
 
     def initialize_ebx_ignoble(self, keyb64, docid, param):
-        self.is_printable = self.is_modifiable = self.is_extractable = True
+        self.is_# printable = self.is_modifiable = self.is_extractable = True
 
         try: 
             key = keyb64.decode('base64')[:16]
@@ -1587,19 +1587,22 @@ class PDFDocument(object):
                 V = bookkey[0]
                 bookkey = bookkey[1:]
             else:
-                print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
-                print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
+                # print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
+                # print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
                 if len(bookkey) > 0:
-                    print("bookkey[0] is %d" % bookkey[0])
+                    pass
+                    # print("bookkey[0] is %d" % bookkey[0])
                 raise ADEPTError('error decrypting book session key - mismatched length')
         else:
             # proper length unknown try with whatever you have
-            print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
-            print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
+            # print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
+            # print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
             if len(bookkey) > 0:
-                print("bookkey[0] is %d" % ord(bookkey[0]))
+                pass
+                # print("bookkey[0] is %d" % ord(bookkey[0]))
             if ebx_V == 3:
                 V = 3
+                
             else:
                 V = 2
         self.decrypt_key = bookkey
@@ -1661,17 +1664,19 @@ class PDFDocument(object):
                 V = bookkey[0]
                 bookkey = bookkey[1:]
             else:
-                print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
-                print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
+                # print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
+                # print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
                 if len(bookkey) > 0:
-                    print("bookkey[0] is %d" % bookkey[0])
+                    pass
+                    # print("bookkey[0] is %d" % bookkey[0])
                 raise ADEPTError('error decrypting book session key - mismatched length')
         else:
             # proper length unknown try with whatever you have
-            print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
-            print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
+            # print("ebx_V is %d  and ebx_type is %d" % (ebx_V, ebx_type))
+            # print("length is %d and len(bookkey) is %d" % (length, len(bookkey)))
             if len(bookkey) > 0:
-                print("bookkey[0] is %d" % bookkey[0])
+                pass
+                # print("bookkey[0] is %d" % bookkey[0])
             if ebx_V == 3:
                 V = 3
             else:
@@ -1792,9 +1797,9 @@ class PDFDocument(object):
                     if STRICT:
                         raise PDFSyntaxError('Invalid object number: objid=%r' % (objid))
 
-                    print('Invalid object number: objid=%r' % (objid))
-                    print("Continuing anyways?")
-                    print("If the resulting PDF is corrupted, please open a bug report.")
+                    # print('Invalid object number: objid=%r' % (objid))
+                    # print("Continuing anyways?")
+                    # print("If the resulting PDF is corrupted, please open a bug report.")
                     return None
 
                 if isinstance(obj, PDFStream):
@@ -2280,7 +2285,7 @@ def decryptBook(userkey, inpath, outpath, inept=True):
             try:
                 serializer.dump(outf)
             except Exception as e:
-                print("error writing pdf: {0}".format(e))
+                # print("error writing pdf: {0}".format(e))
                 traceback.print_exc()
                 return 2
     return 0
@@ -2300,10 +2305,10 @@ def decryptPDF(inpath):
     userkey = open(keypath,'rb').read()
     result = decryptBook(userkey, inpath, outpath)
     if result == 0:
-        print("Successfully decrypted")
+        # print("Successfully decrypted")
         return outpath
     else:
-        print("Decryption failed")
+        # print("Decryption failed")
         return None
 
 

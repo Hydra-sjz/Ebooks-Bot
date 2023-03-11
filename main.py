@@ -8,6 +8,7 @@ import libgen
 import annas
 import hunter
 import zlibrary
+from openlibrary import openlibrary
 
 
 bot_token = os.environ.get("TOKEN", "") 
@@ -65,6 +66,27 @@ I am Ebooks Finder Bot, Just send me a name of the Book and I will get you resul
 [eBook-Hunter](https://ebook-hunter.org/), \
 [Anna's Archive](https://annas-archive.org/), \
 and [Zlibrary](http://z-lib.org/) to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True)
+
+
+def handleASCM(file, message):
+    msg = app.send_message(message.chat.id, "__Processing__", reply_to_message_id=message.id)
+    try: ofile = openlibrary.main(file,None)
+    except: ofile is None
+    os.remove(file)
+
+    if ofile is not None:
+        app.edit_message_text(message.chat.id, msg.id, "__Uploading__")
+        app.send_document(message.chat.id, ofile, reply_to_message_id=message.id)
+        app.delete_messages(message.chat.id, msg.id)
+        os.remove(ofile)
+    else:
+        app.edit_message_text(message.chat.id, msg.id, "__Failed, problem in Decrypting__")
+
+
+@app.on_message(filters.document)
+def acsmfile(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
+    file = app.download_media(message)
+    handleASCM(file, message)
 
 
 @app.on_message(filters.text)
