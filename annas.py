@@ -71,7 +71,7 @@ def getAnnasText(books,choose=0):
     except: pass
     try: text += f'Extension: {books[choose]["extension"]}__'
     except: text += '__'
-    return text + "\n\n------[Annas Archive]------"
+    return text + "\n\n------[Annas Archive]------" + f"  [{choose+1}/{len(books)}]"
 
 
 def handleAnnas(app:Client,call:CallbackQuery,books):

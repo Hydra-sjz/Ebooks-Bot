@@ -2,7 +2,7 @@ import os
 import pyrogram
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup,InlineKeyboardButton, InputMediaPhoto
-from buttons import getButtons
+from buttons import getButtons,getButtonsIA,getSrc
 import pdfdrive
 import libgen
 import annas
@@ -27,6 +27,14 @@ elif zemail is not None and zpass is not None: Z = zlibrary.Zlibrary(email=zemai
 else: Z = None
 if Z and not Z.isLogin(): raise("Wrong Credentials")
 
+# open library
+iaemail = os.environ.get("IA_EMAIL", None)
+iapass = os.environ.get("IA_PASS", None)
+if iaemail is not None and iapass is not None:
+    if not os.path.exists(openlibrary.SESSION_FILE): IA = openlibrary.loginIA(iaemail, iapass)
+    else: IA = True
+else:
+    IA = False
 
 data = {}
 site = {}
@@ -43,13 +51,14 @@ def removedata(msgid):
     site[msgid] = Null
 
 
-sites =  [
+sites = [
             "pdfdrive",
             "librarygenesis",
             "annas",
             "hunter",
             "zlib",
-         ]
+            "openlib"
+        ]
 def isSite(calldata):
     for ele in sites:
         if ele in calldata: return True
@@ -65,12 +74,15 @@ I am Ebooks Finder Bot, Just send me a name of the Book and I will get you resul
 [Library Genesis](https://libgen.li/), \
 [eBook-Hunter](https://ebook-hunter.org/), \
 [Anna's Archive](https://annas-archive.org/), \
-and [Zlibrary](http://z-lib.org/) to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True)
+[Zlibrary](http://z-lib.org/), \
+and [OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/) \
+to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True,
+reply_markup=getSrc())
 
 
 def handleASCM(file, message):
     msg = app.send_message(message.chat.id, "__Processing__", reply_to_message_id=message.id)
-    try: ofile = openlibrary.main(file,None)
+    try: ofile = openlibrary.acsm(file,None)
     except: ofile is None
     os.remove(file)
 
@@ -98,6 +110,7 @@ def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_an
                     [InlineKeyboardButton( text='eBook Hunter', callback_data=f"hunter {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Annas Archive', callback_data=f"annas {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Zlibrary', callback_data=f"zlib {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='Open Library', callback_data=f"openlib {message.chat.id} {message.id}")],
                 ]))
     
 
@@ -175,7 +188,17 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
                 msg = app.send_photo(message.chat.id, zlibrary.getImage(Z, books[0]),
                     zlibrary.getZlibText(books), reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"zlib")    
-        
+
+        # open library
+        elif data[0] == "openlib":
+            books = openlibrary.getOpenlibbooks(search)
+            if len(books) == 0:
+                app.send_message(message.chat.id,f"__Open Library : No results found__", reply_to_message_id=message.id)
+            else:
+                msg = app.send_photo(message.chat.id, books[0]["cover"],
+                    openlibrary.getOpenText(books), reply_to_message_id=message.id, reply_markup=getButtonsIA(books))
+                storedata(msg.id,books,"openlib")
+
         # end
         return
 
@@ -208,6 +231,10 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
     # zlibraray
     elif website == "zlib":
         downloded = zlibrary.handleZlib(Z,app,call,books)
+    
+    # open lib
+    elif website == "openlib":
+        downloded = openlibrary.handleOpen(IA,app,call,books)
 
     # if downloded: 
     #     removedata(call.message.id)
