@@ -24,4 +24,4 @@
 
 * for OpenLibrary
 
-    `IA_EMAIl` & `IA_PASS`
+    `IA_EMAIL` & `IA_PASS`
