@@ -97,8 +97,9 @@ def handleASCM(file, message):
 
 @app.on_message(filters.document)
 def acsmfile(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
-    file = app.download_media(message)
-    handleASCM(file, message)
+    if message.document.file_name.split(".")[-1].lower() == "acsm":
+        file = app.download_media(message)
+        handleASCM(file, message)
 
 
 @app.on_message(filters.text)
