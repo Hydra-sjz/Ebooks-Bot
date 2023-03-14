@@ -79,11 +79,11 @@ def acsm(acsmFile, outputFilename):
 
 def handle_IA(url,format="pdf"):
     if not exists(SESSION_FILE):
-        # print("Login to InternetArchive first or give ACSm file as input")
+        print("Login to InternetArchive first or give ACSM file as input")
         return
     acsmFile = get_book(url,format)
     if acsmFile is None:
-        # print("Could not get Book, try using ACSm file as input")
+        print("Could not get Book, try using ACSM file as input")
         return
     ofile = acsm(acsmFile,None)
     remove(acsmFile)
@@ -161,7 +161,7 @@ def handleOpen(IA,app:Client,call:CallbackQuery,books):
             filename = handle_IA(link)
 
             if filename is None:
-                app.edit_message_text(call.message.chat.id, call.message.id,"__Failed, problem in Downloadinf/Decrypting__")
+                app.edit_message_text(call.message.chat.id, call.message.id,"__Failed, problem in Downloading/Decrypting__")
                 return
 
             res = get(books[choose]["cover"])
