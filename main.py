@@ -30,11 +30,7 @@ if Z and not Z.isLogin(): raise("Wrong Credentials")
 # open library
 iaemail = os.environ.get("IA_EMAIL", None)
 iapass = os.environ.get("IA_PASS", None)
-if iaemail is not None and iapass is not None:
-    if not os.path.exists(openlibrary.SESSION_FILE): IA = openlibrary.loginIA(iaemail, iapass)
-    else: IA = True
-else:
-    IA = False
+IA = (os.path.exists(openlibrary.SESSION_FILE) if not (iaemail and iapass) else openlibrary.loginIA(iaemail, iapass))
 
 data = {}
 site = {}
