@@ -154,7 +154,7 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
             if books is None:
                 app.send_message(message.chat.id,f"__Not able to Connect, maybe Cloudflare protection__", reply_to_message_id=message.id)
             elif len(books) == 0:
-                app.send_message(message.chat.id,f"__Annas archive : No results found__", reply_to_message_id=message.id)
+                app.send_message(message.chat.id,f"__Annas Archive : No results found__", reply_to_message_id=message.id)
             else:
                 msg = app.send_photo(message.chat.id, books[0]["cover"],
                     annas.getAnnasText(books), reply_to_message_id=message.id, reply_markup=getButtons())

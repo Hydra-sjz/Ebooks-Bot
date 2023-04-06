@@ -145,28 +145,32 @@ def handleOpen(IA,app:Client,call:CallbackQuery,books):
 
     # download
         if call.data[0] == "D":
-            if not IA:
+
+            choose = int(call.data.replace("D","").split(",")[0])
+            if isinstance(books[choose]['ia'], str): suffix = books[choose]["ia"]
+            else: suffix = books[choose]["ia"][int(call.data.replace("D","").split(",")[1])]
+            app.edit_message_text(call.message.chat.id, call.message.id, "__Trying to Download without Loan__")
+            nor = get(f"https://archive.org/download/{suffix}/{suffix}.pdf")
+
+            if not IA and nor.status_code != 200:
                 app.edit_message_text(call.message.chat.id, call.message.id,"__Empty/Wrong Crenditals for IA, you can't Download__")
                 return
             
-            
-            app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
-
-            choose = int(call.data.replace("D","").split(",")[0])
-            if isinstance(books[choose]['ia'], str):
-                link = "https://archive.org/details/" + books[choose]["ia"]
+            if nor.status_code != 200:
+                app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
+                link = "https://archive.org/details/" + suffix
+                filename = handle_IA(link)
             else:
-                link = "https://archive.org/details/" + books[choose]["ia"][int(call.data.replace("D","").split(",")[1])]
-            
-            filename = handle_IA(link)
+                filename = "".join( x for x in books[choose]['title'] if (x.isalnum() or x in "_ ")) + ".pdf"
+                with open(filename, "wb") as file:
+                    file.write(nor.content)
 
             if filename is None:
                 app.edit_message_text(call.message.chat.id, call.message.id,"__Failed, problem in Downloading/Decrypting__")
                 return
 
             res = get(books[choose]["cover"])
-            thumbfile = f"{books[choose]['title']}"
-            thumbfile = "".join( x for x in thumbfile if (x.isalnum() or x in "_ ")) + ".jpg"
+            thumbfile = "".join( x for x in books[choose]['title'] if (x.isalnum() or x in "_ ")) + ".jpg"
             with open(thumbfile, "wb") as file:
                 file.write(res.content)
                 

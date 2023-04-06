@@ -10,7 +10,7 @@ def getAnnasBooks(searchbook):
     params = {'q': searchbook}
     response = get('https://annas-archive.org/search', params=params)
     soups = BeautifulSoup(response.content,"html.parser")
-    try: soups = soups.findAll("div",class_="mb-4")[-1].findAll("div",class_="h-[125]")
+    try:soups = soups.findAll("div",class_="h-[125]")
     except: return None
     books = []
 
