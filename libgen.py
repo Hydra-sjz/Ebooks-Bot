@@ -50,9 +50,11 @@ def handleLibGen(app:Client,call:CallbackQuery,books):
             i = 0
             while i<len(links):
                 print(links[i])
-                res = get(links[i])
-                if res.status_code == 200: break
-                else: i += 1
+                try:
+                    res = get(links[i])
+                    if res.status_code == 200: break
+                except:pass
+                i += 1
             
             if i == len(books):
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Failed__")

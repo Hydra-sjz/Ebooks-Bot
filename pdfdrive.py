@@ -47,22 +47,25 @@ def getpage(searchterm):
             book = searchedbookinfo()
             book.id = ele.find("a").get("data-id")
             book.link = "https://www.pdfdrive.com" + ele.find("a").get("href")
-            book.coverlink = ele.find("a").find("img").get("data-original") #src
+            book.coverlink = ele.find("img").get("data-original") #src
             title = ""
+
             for word in ele.find("a",class_="ai-search").findAll("b"):
                 title = title + word.string + " "
             if title == "":
                 book.title = ele.find("a",class_="ai-search").find("h2").string
             else:
                 book.title = title
-            book.pages = ele.find("div",class_="file-info").find("span",class_="fi-pagecount").string.split(" ")[0]
-            book.year = ele.find("div",class_="file-info").find("span",class_="fi-year").string
-            book.size = ele.find("div",class_="file-info").find("span",class_="fi-size").string
-            book.downloads = ele.find("div",class_="file-info").find("span",class_="fi-hit").string.string.split(" ")[0]
+            try: book.pages = ele.find("div",class_="file-info").find("span",class_="fi-pagecount").string.split(" ")[0]
+            except: book.pages = "0"
+            try: book.year = ele.find("div",class_="file-info").find("span",class_="fi-year").string
+            except: book.year = "0"
+            try: book.size = ele.find("div",class_="file-info").find("span",class_="fi-size").string
+            except: book.size = "0"
+            book.downloads = book.link #ele.find("div",class_="file-info").find("span",class_="fi-hit").string.string.split(" ")[0]
             books.append(book)
 
-        except:
-            pass
+        except: pass
 
     return books
 
@@ -86,7 +89,7 @@ def getdownlink(book):
 
     url = book.link.replace(f'e{book.id}',f"d{book.id}")
     response = get(url, headers=headers)
-    soup = BeautifulSoup(response.text,"html.parser").findAll("script")[7].get_text()
+    soup = BeautifulSoup(response.text,"html.parser").findAll("script")[6].get_text()
     
     temp = soup.split("{")
     for ele in temp:

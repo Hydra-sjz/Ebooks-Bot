@@ -47,7 +47,7 @@ def getAnnasBooks(searchbook):
 def getDownLinks(book):
     res = get(book["link"])
     soup = BeautifulSoup(res.content,"html.parser")
-    soup = soup.find("div",class_="mb-4 p-6 overflow-hidden bg-[#0000000d] break-words").findAll("a")
+    soup = soup.find("main",class_="main").find("ul",class_="mb-4").findAll("a")
     links = []
     for ele in soup:
         link = ele.get("href")
@@ -116,5 +116,3 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             InputMediaPhoto(books[choose]["cover"],getAnnasText(books,choose)),
             reply_markup=getButtons(choose))
         return False
-
-
