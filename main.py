@@ -9,27 +9,36 @@ import annas
 import hunter
 import zlibrary
 from openlibrary import openlibrary
+import json
 
 
-bot_token = os.environ.get("TOKEN", "") 
-api_hash = os.environ.get("HASH", "") 
-api_id = os.environ.get("ID", "")
+with open('config.json', 'r') as f: data = json.load(f)
+def getenv(var): return os.environ.get(var) or data.get(var, None)
+
+bot_token = getenv("TOKEN")
+api_hash = getenv("HASH")
+api_id = getenv("ID")
+
+if bot_token is None or api_hash is None or api_id is None:
+    print("Required ENVs are not set i.e TOKEN, HASH, ID")
+    exit(1)
+
 app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
-wrongimage = "https://w7.pngwing.com/pngs/389/161/png-transparent-sign-symbol-x-mark-check-mark-christian-cross-symbol-miscellaneous-angle-logo-thumbnail.png"
+wrongimage = "https://i.ibb.co/9pBPB5S/wrong.png"
 
 # zlibrary
-remix_id = os.environ.get("REMIX_ID", None)
-remix_key = os.environ.get("REMIX_KEY", None)
-zemail = os.environ.get("Z_EMAIL", None)
-zpass = os.environ.get("Z_PASS", None)
+remix_id = getenv("REMIX_ID")
+remix_key = getenv("REMIX_KEY")
+zemail = getenv("Z_EMAIL")
+zpass = getenv("Z_PASS")
 if remix_id is not None and remix_key is not None: Z = zlibrary.Zlibrary(remix_userid=remix_id, remix_userkey=remix_key)
 elif zemail is not None and zpass is not None: Z = zlibrary.Zlibrary(email=zemail, password=zpass)
 else: Z = None
 if Z and not Z.isLogin(): raise("Wrong Credentials")
 
 # open library
-iaemail = os.environ.get("IA_EMAIL", None)
-iapass = os.environ.get("IA_PASS", None)
+iaemail = getenv("IA_EMAIL")
+iapass = getenv("IA_PASS")
 IA = (os.path.exists(openlibrary.SESSION_FILE) if not (iaemail and iapass) else openlibrary.loginIA(iaemail, iapass))
 
 data = {}
