@@ -33,8 +33,8 @@ except ImportError:
 
 from openlibrary.setup.customRSA import CustomRSA
 
-from oscrypto import keys
-from oscrypto.asymmetric import dump_certificate, dump_private_key
+from cryptography.hazmat.primitives.serialization.pkcs12 import load_key_and_certificates
+from cryptography.hazmat.primitives import serialization
 
 
 VAR_ACS_SERVER_HTTP = "http://adeactivate.adobe.com/adept"
@@ -488,8 +488,8 @@ def addNonce():
 
 def get_cert_from_pkcs12(_pkcs12, _key):
 
-    _, cert, _ = keys.parse_pkcs12(_pkcs12, _key)
-    return dump_certificate(cert, encoding="der")
+    _, cert, _ = load_key_and_certificates(_pkcs12, _key)
+    return cert.public_bytes(encoding=serialization.Encoding.DER)
 
 
 
@@ -519,8 +519,12 @@ def sign_node(node):
         return None
 
     my_pkcs12 = base64.b64decode(pkcs12)
-    my_priv_key, _, _ = keys.parse_pkcs12(my_pkcs12, base64.b64encode(devkey_bytes))
-    my_priv_key = dump_private_key(my_priv_key, None, "der")
+    my_priv_key, _, _ = load_key_and_certificates(my_pkcs12, base64.b64encode(devkey_bytes))
+    my_priv_key = my_priv_key.private_bytes(
+                    encoding=serialization.Encoding.DER,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
 
     # textbook RSA with that private key
 
