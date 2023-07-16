@@ -141,7 +141,7 @@ def getOpenText(books,choose=0):
     return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\n\nEdition/s: {listt}__' + "\n------[Open Library]------" + f"  [{choose+1}/{len(books)}]"
 
 
-def handleOpen(IA,app:Client,call:CallbackQuery,books):
+def handleOpen(iaemail, iapass, app:Client,call:CallbackQuery,books):
 
     # download
         if call.data[0] == "D":
@@ -151,12 +151,12 @@ def handleOpen(IA,app:Client,call:CallbackQuery,books):
             else: suffix = books[choose]["ia"][int(call.data.replace("D","").split(",")[1])]
             app.edit_message_text(call.message.chat.id, call.message.id, "__Trying to Download without Loan__")
             nor = get(f"https://archive.org/download/{suffix}/{suffix}.pdf")
-
-            if not IA and nor.status_code != 200:
-                app.edit_message_text(call.message.chat.id, call.message.id,"__Empty/Wrong Crenditals for IA, you can't Download__")
-                return
             
             if nor.status_code != 200:
+                IA = False if not (iaemail and iapass) else loginIA(iaemail, iapass)
+                if not IA:
+                    app.edit_message_text(call.message.chat.id, call.message.id,"__Empty/Wrong Crenditals for IA, you can't Download__")
+                    return
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
                 link = "https://archive.org/details/" + suffix
                 filename = handle_IA(link)

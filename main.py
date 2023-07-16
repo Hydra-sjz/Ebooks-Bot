@@ -39,7 +39,6 @@ if Z and not Z.isLogin(): raise("Wrong Credentials")
 # open library
 iaemail = getenv("IA_EMAIL")
 iapass = getenv("IA_PASS")
-IA = (os.path.exists(openlibrary.SESSION_FILE) if not (iaemail and iapass) else openlibrary.loginIA(iaemail, iapass))
 
 data = {}
 site = {}
@@ -240,7 +239,7 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
     
     # open lib
     elif website == "openlib":
-        downloded = openlibrary.handleOpen(IA,app,call,books)
+        downloded = openlibrary.handleOpen(iaemail, iapass, app,call, books)
 
     # if downloded: 
     #     removedata(call.message.id)
