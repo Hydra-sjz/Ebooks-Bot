@@ -270,11 +270,11 @@ def sendHTTPRequest_DL2FILE(URL, outputfile):
             f.write(chunk)
             
             # progress bar
-            progress = float(bytes_so_far) / total_size
-            progress_bar_width = 40
-            progress_bar = ('[' + '=' * int(progress * progress_bar_width)).ljust(progress_bar_width + 1) + ']'
-            percent = round(progress * 100, 2)
-            print("Downloaded %d of %d bytes %s %0.2f%%" % (bytes_so_far, total_size, progress_bar, percent), end='\r')
+            # progress = float(bytes_so_far) / total_size
+            # progress_bar_width = 40
+            # progress_bar = ('[' + '=' * int(progress * progress_bar_width)).ljust(progress_bar_width + 1) + ']'
+            # percent = round(progress * 100, 2)
+            # print("Downloaded %d of %d bytes %s %0.2f%%" % (bytes_so_far, total_size, progress_bar, percent), end='\r')
 
     print()
     return 200
