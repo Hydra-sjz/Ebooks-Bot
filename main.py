@@ -80,8 +80,7 @@ I am Ebooks Finder Bot, Just send me a name of the Book and I will get you resul
 [Anna's Archive](https://annas-archive.org/), \
 [Zlibrary](http://z-lib.org/), \
 and [OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/) \
-to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True,
-reply_markup=getSrc())
+to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True,)
 
 
 def handleASCM(file, message):
