@@ -36,8 +36,10 @@ def getBookImg(book):
         return noimage
 
 def getLibText(books,choose=0,final=False):
-    return f'**{books[0]["Title"]}**\n\n__Author: {books[choose]["Author"]}\nPublisher: {books[choose]["Publisher"]}\nYear: {books[choose]["Year"]}\nSize: {books[choose]["Size"]}\nPages: {books[choose]["Pages"]}\nLanguage: {books[choose]["Language"]}\nExtension: {books[choose]["Extension"]}__' \
-    + "\n\n------[LibraryGenesis]------" + "" if final else f"  [{choose+1}/{len(books)}]"
+    txt = f'**{books[0]["Title"]}**\n\n__Author: {books[choose]["Author"]}\nPublisher: {books[choose]["Publisher"]}\nYear: {books[choose]["Year"]}\nSize: {books[choose]["Size"]}\nPages: {books[choose]["Pages"]}\nLanguage: {books[choose]["Language"]}\nExtension: {books[choose]["Extension"]}__' \
+    + "\n\n------[LibraryGenesis]------"
+    if not final: txt += f"  [{choose+1}/{len(books)}]"
+    return txt
 
 def handleLibGen(app:Client,call:CallbackQuery,books):
 

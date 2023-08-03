@@ -138,7 +138,9 @@ def getOpenText(books,choose=0,final=False):
             listt += f'{i+1}. https://archive.org/details/{books[choose]["ia"][i]}\n'
     else: listt = "https://archive.org/details/" + books[choose]["ia"] + "\n"
 
-    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\n\nEdition/s: {listt}__' + "\n------[Open Library]------" +  "" if final else f"  [{choose+1}/{len(books)}]"
+    txt = f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\n\nEdition/s: {listt}__' + "\n------[Open Library]------"
+    if not final: txt += f"  [{choose+1}/{len(books)}]"
+    return txt
 
 
 def handleOpen(iaemail, iapass, app:Client,call:CallbackQuery,books):
