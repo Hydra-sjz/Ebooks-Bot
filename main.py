@@ -76,7 +76,7 @@ def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from \
 [Library Genesis](https://libgen.li/), \
 [Zlibrary](http://z-lib.org/), \
-[OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/) \
+[OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/), \
 [Anna's Archive](https://annas-archive.org/), \
 [PdfDrive](https://pdfdrive.to), \
 and [eBook-Hunter](https://ebook-hunter.org/), \
@@ -135,11 +135,11 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
                 app.send_message(message.chat.id,f"__PDFdrive : No results found__", reply_to_message_id=message.id)
             else:
                 try:
-                    msg = app.send_photo(message.chat.id, books[0].link,
+                    msg = app.send_photo(message.chat.id, books[0]["coverlink"],
                     pdfdrive.getPdfText(books),
                     reply_to_message_id=message.id, reply_markup=getButtons())
                 except:
-                    msg = app.send_photo(message.chat.id, books[0].coverlink,
+                    msg = app.send_photo(message.chat.id, books[0]["link"],
                     pdfdrive.getPdfText(books),
                     reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"pdfdrive")
