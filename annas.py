@@ -79,7 +79,7 @@ def getDownLinks(book):
     return links
 
 
-def getAnnasText(books,choose=0):
+def getAnnasText(books,choose=0,final=False):
     text = ""
     try: text += f'**{books[choose]["title"]}**\n\n'
     except: pass
@@ -93,7 +93,7 @@ def getAnnasText(books,choose=0):
     except: pass
     try: text += f'Extension: {books[choose]["extension"]}__'
     except: text += '__'
-    return text + "\n\n------[Annas Archive]------" + f"  [{choose+1}/{len(books)}]"
+    return text + "\n\n------[Annas Archive]------" + "" if final else f"  [{choose+1}/{len(books)}]"
 
 
 def handleAnnas(app:Client,call:CallbackQuery,books):
@@ -124,7 +124,7 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
                 file.write(res.content)
                 
             app.edit_message_text(call.message.chat.id, call.message.id, "__Uploading__")
-            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['title']}**"))
+            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=getAnnasText(books,choose, True)))
             remove(filename)
             remove(thumbfile)
             return True

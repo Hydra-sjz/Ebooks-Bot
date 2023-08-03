@@ -243,9 +243,9 @@ def getZlibBooks(Z: Zlibrary, search: str):
         return False, resp["error"]
     return True, resp["books"]
 
-def getZlibText(books, choose=0):
+def getZlibText(books, choose=0, final=True):
     return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\nVolume: {books[choose]["volume"]}\nEdition: {books[choose]["edition"]}\nLanguage: {books[choose]["language"]}\nPublisher: {books[choose]["publisher"]}\nExtension: {books[choose]["extension"]}\nSize: {books[choose]["filesizeString"]}\npages: {books[choose]["pages"]}\nSeries: {books[choose]["series"]}__' \
-    + "\n\n------[Zlibrary]------" + f"  [{choose+1}/{len(books)}]"
+    + "\n\n------[Zlibrary]------" + "" if final else f"  [{choose+1}/{len(books)}]"
 
 def getImage(Z: Zlibrary, book):
     return BytesIO(Z.getImage(book))
@@ -268,7 +268,7 @@ def handleZlib(Z: Zlibrary, app:Client,call:CallbackQuery,books):
                 file.write(Icont)
                 
             app.edit_message_text(call.message.chat.id, call.message.id, "__Uploading__")
-            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['title']}**"))
+            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=getZlibText(books,choose,True)))
             remove(filename)
             remove(thumbfile)
             return True

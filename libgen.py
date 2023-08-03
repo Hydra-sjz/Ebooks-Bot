@@ -35,9 +35,9 @@ def getBookImg(book):
     except:
         return noimage
 
-def getLibText(books,choose=0):
+def getLibText(books,choose=0,final=False):
     return f'**{books[0]["Title"]}**\n\n__Author: {books[choose]["Author"]}\nPublisher: {books[choose]["Publisher"]}\nYear: {books[choose]["Year"]}\nSize: {books[choose]["Size"]}\nPages: {books[choose]["Pages"]}\nLanguage: {books[choose]["Language"]}\nExtension: {books[choose]["Extension"]}__' \
-    + "\n\n------[LibraryGenesis]------" + f"  [{choose+1}/{len(books)}]"
+    + "\n\n------[LibraryGenesis]------" + "" if final else f"  [{choose+1}/{len(books)}]"
 
 def handleLibGen(app:Client,call:CallbackQuery,books):
 
@@ -72,7 +72,7 @@ def handleLibGen(app:Client,call:CallbackQuery,books):
                 file.write(res.content)
                 
             app.edit_message_text(call.message.chat.id, call.message.id, "__Uploading__")
-            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['Title']}**"))
+            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=getLibText(books,choose,True)))
             remove(filename)
             remove(thumbfile)
             return True

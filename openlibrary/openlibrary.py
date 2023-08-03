@@ -131,14 +131,14 @@ def getOpenlibbooks(search):
     
     return books
 
-def getOpenText(books,choose=0):
+def getOpenText(books,choose=0,final=False):
     if isinstance(books[choose]['ia'], list):
         listt = "\n"
         for i in range(len(books[choose]["ia"])):
             listt += f'{i+1}. https://archive.org/details/{books[choose]["ia"][i]}\n'
     else: listt = "https://archive.org/details/" + books[choose]["ia"] + "\n"
 
-    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\n\nEdition/s: {listt}__' + "\n------[Open Library]------" + f"  [{choose+1}/{len(books)}]"
+    return f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\n\nEdition/s: {listt}__' + "\n------[Open Library]------" +  "" if final else f"  [{choose+1}/{len(books)}]"
 
 
 def handleOpen(iaemail, iapass, app:Client,call:CallbackQuery,books):
@@ -175,7 +175,7 @@ def handleOpen(iaemail, iapass, app:Client,call:CallbackQuery,books):
                 file.write(res.content)
                 
             app.edit_message_text(call.message.chat.id, call.message.id, "__Uploading__")
-            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=f"**{books[choose]['title']}**"))
+            app.edit_message_media(call.message.chat.id, call.message.id, InputMediaDocument(filename, thumb=thumbfile, caption=getOpenText(books,choose,True)))
             remove(filename)
             remove(thumbfile)
             return True
