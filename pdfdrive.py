@@ -3,7 +3,7 @@ from requests import get
 # from bs4 import BeautifulSoup
 from pyrogram.types import InputMediaPhoto, CallbackQuery # ,InputMediaDocument
 from pyrogram import Client
-from buttons import getButtons
+from buttons import getButtons, getExtButton
 
 wrongimage = "https://i.ibb.co/9pBPB5S/wrong.png"
 
@@ -47,7 +47,7 @@ def getpage(searchterm):
         book["link"] = "https://pdfdrive.to/filedownload/" + ele["slug"]
         book["coverlink"] = ele.get("thumbnail",wrongimage)
         book["title"] = ele["name"]
-        book["author"] = ele["author"]
+        book["author"] = ele["author"].replace("\n"," ")
         book["pages"] = str(ele["page"])
         book["year"] = str(ele["release_year"])
         book["size"] = str(ele["file_size"]) + "MB"
@@ -59,7 +59,7 @@ def getpage(searchterm):
 
 
 def getPdfText(books,choose=0):
-    return f'**{books[choose]["title"]}**\n\n__Year: {books[choose]["year"]}\nSize: {books[choose]["size"]}\nPages: {books[choose]["pages"]}\nAuthor: {books[choose]["author"]}\Language: {books[choose]["lang"]}__' \
+    return f'**{books[choose]["title"]}**\n\n__Year: {books[choose]["year"]}\nSize: {books[choose]["size"]}\nPages: {books[choose]["pages"]}\nAuthor: {books[choose]["author"]}\nLanguage: {books[choose]["lang"]}__' \
     + "\n\n------[PDFdrive]------" + f"  [{choose+1}/{len(books)}]"
 
 
@@ -68,7 +68,8 @@ def handlePdfdrive(app:Client,call:CallbackQuery,books:list):
     # download
         if call.data[0] == "D":
             choose = int(call.data.replace("D",""))
-            app.edit_message_text(call.message.chat.id, call.message.id, f'**{books[choose]["title"]}**\n\n__External Link : {books[choose]["downloads"]}__')
+            app.edit_message_reply_markup(call.message.chat.id, call.message.id,
+                    getExtButton(books[choose]["downloads"]))
             return True
             
         #  next

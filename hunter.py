@@ -2,7 +2,7 @@ from requests import get
 from bs4 import BeautifulSoup
 from pyrogram.types import InputMediaPhoto, InputMediaDocument, CallbackQuery
 from pyrogram import Client
-from buttons import getButtons
+from buttons import getButtons, getExtButton
 
 def getHunterBooks(searchterm):
     params = {
@@ -50,8 +50,9 @@ def handleHunt(app:Client,call:CallbackQuery,books):
     # download
         if call.data[0] == "D":
             choose = int(call.data.replace("D",""))
-            link = getDlink(books[choose])                
-            app.edit_message_text(call.message.chat.id, call.message.id, f'**{books[choose]["title"]}**\n\n__External Link : {link}__')
+            link = getDlink(books[choose])
+            app.edit_message_reply_markup(call.message.chat.id, call.message.id,
+                    getExtButton(link))
             return True
 
         #  next

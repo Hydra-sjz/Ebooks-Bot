@@ -1,6 +1,13 @@
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
+def getExtButton(link):
+    return InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton(text='External Link', url=link),
+        ]])
+
+
 def getButtons(choose=0):
     return InlineKeyboardMarkup(
         [[
