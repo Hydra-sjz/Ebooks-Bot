@@ -55,14 +55,7 @@ def removedata(msgid):
     site[msgid] = Null
 
 
-sites = [   
-            "librarygenesis",
-            "zlib",
-            "openlib"
-            "annas",
-            "pdfdrive",
-            "hunter",
-        ]
+sites = ["librarygenesis", "zlib", "openlib", "annas", "pdfdrive", "hunter"]
 def isSite(calldata):
     for ele in sites:
         if ele in calldata: return True
