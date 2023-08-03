@@ -134,14 +134,14 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
             if len(books) == 0:
                 app.send_message(message.chat.id,f"__PDFdrive : No results found__", reply_to_message_id=message.id)
             else:
-                try:
-                    msg = app.send_photo(message.chat.id, books[0]["coverlink"],
-                    pdfdrive.getPdfText(books),
-                    reply_to_message_id=message.id, reply_markup=getButtons())
-                except:
-                    msg = app.send_photo(message.chat.id, books[0]["link"],
-                    pdfdrive.getPdfText(books),
-                    reply_to_message_id=message.id, reply_markup=getButtons())
+                templst = [books[0]["coverlink"],books[0]["link"],wrongimage]
+                for ele in templst:
+                    try:
+                        msg = app.send_photo(message.chat.id, ele,
+                        pdfdrive.getPdfText(books),
+                        reply_to_message_id=message.id, reply_markup=getButtons())
+                        break
+                    except: pass
                 storedata(msg.id,books,"pdfdrive")
         
         # librarygenesis

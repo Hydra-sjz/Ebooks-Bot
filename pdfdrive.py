@@ -73,12 +73,12 @@ def handlePdfdrive(app:Client,call:CallbackQuery,books:list):
             
         #  next
         choose = int(call.data) % len(books)
-        try:
-            app.edit_message_media(call.message.chat.id, call.message.id,
-            InputMediaPhoto(books[choose]["coverlink"],getPdfText(books,choose)),
-            reply_markup=getButtons(choose))
-        except:
-            app.edit_message_media(call.message.chat.id, call.message.id,
-            InputMediaPhoto(books[choose]["link"],getPdfText(books,choose)),
-            reply_markup=getButtons(choose))
+        templst = [books[choose]["coverlink"],books[choose]["link"],wrongimage]
+        for ele in templst:
+            try:
+                app.edit_message_media(call.message.chat.id, call.message.id,
+                InputMediaPhoto(ele,getPdfText(books,choose)),
+                reply_markup=getButtons(choose))
+                break
+            except: pass
         return False
