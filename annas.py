@@ -44,16 +44,38 @@ def getAnnasBooks(searchbook):
     return books
 
 
+def resolve_lib_download_links(url):
+        page = get(url)
+        soup = BeautifulSoup(page.text, "html.parser")
+        links = soup.find_all("a", string=["GET", "Cloudflare", "IPFS.io", "Infura"])
+        download_links = ["https://" + url.split("/")[2] + "/" + link["href"] for link in links]
+        return download_links
+
+
 def getDownLinks(book):
+    headers = {
+        'authority': 'annas-archive.org',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'en-US,en;q=0.9',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+    }
+
     res = get(book["link"])
     soup = BeautifulSoup(res.content,"html.parser")
-    soup = soup.find("main",class_="main").find("ul",class_="mb-4").findAll("a")
+    soup = soup.find("div",class_="mb-6").findAll("a")
     links = []
     for ele in soup:
         link = ele.get("href")
-        if "http://lib" not in link:
-            links.append(link)
-
+        if "/slow_download" == link[:len("/slow_download")]:
+            url = "https://annas-archive.org" + link
+            res = get(url,headers=headers)
+            soup = BeautifulSoup(res.content,"html.parser")
+            try: links.append(soup.find("p",class_="mb-4").find("a").get("href"))
+            except: links.append(url)
+        elif "http://lib" == link[:len("http://lib")]:
+            tmp = resolve_lib_download_links(link)
+            for li in tmp: links.insert(0,li)
+        elif "https://" == link[:len("https://")]: links.insert(0,link)
     return links
 
 
@@ -82,14 +104,11 @@ def handleAnnas(app:Client,call:CallbackQuery,books):
             app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
             links = getDownLinks(books[choose])
 
-            i = 0
-            while i<len(links):
-                print(links[i])
-                res = get(links[i])
+            for link in links:
+                print(link)
+                res = get(link)
                 if res.status_code == 200: break
-                else: i += 1
-            
-            if i == len(books):
+            else: 
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Failed__")
                 return True
 
