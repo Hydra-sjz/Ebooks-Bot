@@ -45,7 +45,7 @@ def getpage(searchterm):
         book = {}
         book["id"] = ele["id"]
         book["link"] = "https://pdfdrive.to/filedownload/" + ele["slug"]
-        book["coverlink"] = ele.get("thumbline",wrongimage)
+        book["coverlink"] = ele.get("thumbnail",wrongimage)
         book["title"] = ele["name"]
         book["author"] = ele["author"]
         book["pages"] = str(ele["page"])
