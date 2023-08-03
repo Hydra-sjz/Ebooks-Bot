@@ -2,7 +2,7 @@ import os
 import pyrogram
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup,InlineKeyboardButton, InputMediaPhoto
-from buttons import getButtons,getButtonsIA,getSrc
+from buttons import getButtons,getButtonsIA, getSrc
 import pdfdrive
 import libgen
 import annas
@@ -23,8 +23,8 @@ if bot_token is None or api_hash is None or api_id is None:
     print("Required ENVs are not set i.e TOKEN, HASH, ID")
     exit(1)
 
-app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
 wrongimage = "https://i.ibb.co/9pBPB5S/wrong.png"
+app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
 
 # zlibrary
 remix_id = getenv("REMIX_ID")
@@ -55,13 +55,13 @@ def removedata(msgid):
     site[msgid] = Null
 
 
-sites = [
-            "pdfdrive",
+sites = [   
             "librarygenesis",
-            "annas",
-            "hunter",
             "zlib",
             "openlib"
+            "annas",
+            "pdfdrive",
+            "hunter",
         ]
 def isSite(calldata):
     for ele in sites:
@@ -74,13 +74,13 @@ def echo(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
     app.send_message(message.chat.id,
         f"__Hello {message.from_user.mention}, \
 I am Ebooks Finder Bot, Just send me a name of the Book and I will get you results from \
-[PdfDrive](https://pdfdrive.com), \
 [Library Genesis](https://libgen.li/), \
-[eBook-Hunter](https://ebook-hunter.org/), \
-[Anna's Archive](https://annas-archive.org/), \
 [Zlibrary](http://z-lib.org/), \
-and [OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/) \
-to right here.__", reply_to_message_id=message.id, disable_web_page_preview=True,)
+[OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/) \
+[Anna's Archive](https://annas-archive.org/), \
+[PdfDrive](https://pdfdrive.to), \
+and [eBook-Hunter](https://ebook-hunter.org/), \
+to right here OR send me ACSM file from IA to decrypt__", reply_to_message_id=message.id, disable_web_page_preview=True,)
 
 
 def handleASCM(file, message):
@@ -110,11 +110,11 @@ def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_an
     app.send_message(message.chat.id, '__choose website to get result from__', reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton( text='Library Genesis', callback_data=f"librarygenesis {message.chat.id} {message.id}")],
-                    [InlineKeyboardButton( text='PDF Drive', callback_data=f"pdfdrive {message.chat.id} {message.id}")],
-                    [InlineKeyboardButton( text='eBook Hunter', callback_data=f"hunter {message.chat.id} {message.id}")],
-                    [InlineKeyboardButton( text='Annas Archive', callback_data=f"annas {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Zlibrary', callback_data=f"zlib {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Open Library', callback_data=f"openlib {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='Annas Archive', callback_data=f"annas {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='PDF Drive', callback_data=f"pdfdrive {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='eBook Hunter', callback_data=f"hunter {message.chat.id} {message.id}")],                    
                 ]))
     
 
