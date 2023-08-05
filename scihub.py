@@ -1,13 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 from scholarly import scholarly
-from os import remove
+from os import remove, environ
 from pyrogram.types import InputMediaPhoto, InputMediaDocument, CallbackQuery
 from pyrogram import Client
 from buttons import getButtons
+import json
 
+with open('config.json', 'r') as f: data = json.load(f)
+def getenv(var): return environ.get(var) or data.get(var, None)
 SCIHUB_URL = 'https://sci-hub.se/'
-PROXY = True
+PROXY = getenv("PROXY")
 noimage = "https://t3.ftcdn.net/jpg/04/34/72/82/360_F_434728286_OWQQvAFoXZLdGHlObozsolNeuSxhpr84.jpg"
 
 if PROXY:
