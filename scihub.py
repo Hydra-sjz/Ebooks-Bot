@@ -22,7 +22,8 @@ if PROXY:
 
 def getSciPubs(search):
     results = []
-    res = scholarly.search_pubs(search, citations=False, patents=False)
+    try: res = scholarly.search_pubs(search, citations=False, patents=False)
+    except: return results
     for _ in range(10):
         pub = {}
         try:
