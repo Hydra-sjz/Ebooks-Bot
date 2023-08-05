@@ -202,16 +202,16 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
         
         # scihub
         elif data[0] == "scihub":
-            books = libgen.getBooks(search)
+            books = scihub.getSciPubs(search)
             if len(books) == 0:
                 app.send_message(message.chat.id,f"__SciHub : No results found__", reply_to_message_id=message.id)
             else:
                 try: 
                     msg = app.send_photo(message.chat.id, books[0]["url"],
-                    libgen.getLibText(books), reply_to_message_id=message.id, reply_markup=getButtons())
+                    scihub.getSciText(books), reply_to_message_id=message.id, reply_markup=getButtons())
                 except:
                     msg = app.send_photo(message.chat.id, noimage,
-                    libgen.getLibText(books), reply_to_message_id=message.id, reply_markup=getButtons())
+                    scihub.getSciText(books), reply_to_message_id=message.id, reply_markup=getButtons())
                 storedata(msg.id,books,"scihub")
 
         # end
