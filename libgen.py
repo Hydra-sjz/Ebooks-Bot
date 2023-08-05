@@ -49,16 +49,13 @@ def handleLibGen(app:Client,call:CallbackQuery,books):
             app.edit_message_text(call.message.chat.id, call.message.id, "__Downloading__")
             links = getDownLink(books[choose])
 
-            i = 0
-            while i<len(links):
-                print(links[i])
+            for link in links:
+                print(link)
                 try:
-                    res = get(links[i])
+                    res = get(link)
                     if res.status_code == 200: break
                 except:pass
-                i += 1
-            
-            if i == len(books):
+            else:
                 app.edit_message_text(call.message.chat.id, call.message.id, "__Failed__")
                 return True
 
