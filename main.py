@@ -9,6 +9,7 @@ import annas
 import hunter
 import zlibrary
 from openlibrary import openlibrary
+import scihub
 import json
 
 
@@ -24,6 +25,7 @@ if bot_token is None or api_hash is None or api_id is None:
     exit(1)
 
 wrongimage = "https://i.ibb.co/9pBPB5S/wrong.png"
+noimage = "https://t3.ftcdn.net/jpg/04/34/72/82/360_F_434728286_OWQQvAFoXZLdGHlObozsolNeuSxhpr84.jpg"
 app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
 
 # zlibrary
@@ -55,7 +57,7 @@ def removedata(msgid):
     site[msgid] = Null
 
 
-sites = ["librarygenesis", "zlib", "openlib", "annas", "pdfdrive", "hunter"]
+sites = ["librarygenesis", "zlib", "openlib", "scihub", "annas", "pdfdrive", "hunter"]
 def isSite(calldata):
     for ele in sites:
         if ele in calldata: return True
@@ -70,6 +72,7 @@ I am Ebooks Finder Bot, Just send me a name of the Book and I will get you resul
 [Library Genesis](https://libgen.li/), \
 [Zlibrary](http://z-lib.org/), \
 [OpenLibrary](https://openlibrary.org)/[InternetArchive](https://archive.org/), \
+[SciHub](https://sci-hub.se/), \
 [Anna's Archive](https://annas-archive.org/), \
 [PdfDrive](https://pdfdrive.to), \
 and [eBook-Hunter](https://ebook-hunter.org/), \
@@ -105,6 +108,7 @@ def bookname(client: pyrogram.client.Client, message: pyrogram.types.messages_an
                     [InlineKeyboardButton( text='Library Genesis', callback_data=f"librarygenesis {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Zlibrary', callback_data=f"zlib {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Open Library', callback_data=f"openlib {message.chat.id} {message.id}")],
+                    [InlineKeyboardButton( text='SciHub', callback_data=f"scihub {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='Annas Archive', callback_data=f"annas {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='PDF Drive', callback_data=f"pdfdrive {message.chat.id} {message.id}")],
                     [InlineKeyboardButton( text='eBook Hunter', callback_data=f"hunter {message.chat.id} {message.id}")],                    
@@ -195,6 +199,20 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
                 msg = app.send_photo(message.chat.id, books[0]["cover"],
                     openlibrary.getOpenText(books), reply_to_message_id=message.id, reply_markup=getButtonsIA(books))
                 storedata(msg.id,books,"openlib")
+        
+        # scihub
+        elif data[0] == "scihub":
+            books = libgen.getBooks(search)
+            if len(books) == 0:
+                app.send_message(message.chat.id,f"__SciHub : No results found__", reply_to_message_id=message.id)
+            else:
+                try: 
+                    msg = app.send_photo(message.chat.id, books[0]["url"],
+                    libgen.getLibText(books), reply_to_message_id=message.id, reply_markup=getButtons())
+                except:
+                    msg = app.send_photo(message.chat.id, noimage,
+                    libgen.getLibText(books), reply_to_message_id=message.id, reply_markup=getButtons())
+                storedata(msg.id,books,"scihub")
 
         # end
         return
@@ -232,6 +250,10 @@ def handle(client: pyrogram.client.Client, call: pyrogram.types.CallbackQuery):
     # open lib
     elif website == "openlib":
         downloded = openlibrary.handleOpen(iaemail, iapass, app,call, books)
+    
+    # scihub
+    elif website == "scihub":
+        downloded = scihub.handleSchiHub(app,call,books)
 
     # if downloded: 
     #     removedata(call.message.id)

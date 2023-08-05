@@ -3,7 +3,7 @@ bs4
 pyrogram
 tgcrypto
 libgen-api
-
+scholarly
 pycryptodomex==3.17
 cryptography==41.0.1
 lxml==4.9.2
