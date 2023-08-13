@@ -5,10 +5,11 @@ from pyrogram import Client
 from buttons import getButtons
 from os import remove
 
+DOMAIN = "https://annas-archive.gs"
 
 def getAnnasBooks(searchbook):
     params = {'q': searchbook}
-    response = get('https://annas-archive.org/search', params=params)
+    response = get(f"{DOMAIN}/search", params=params)
     soups = BeautifulSoup(response.content,"html.parser")
     try:soups = soups.findAll("div",class_="h-[125]")
     except: return None
@@ -20,7 +21,7 @@ def getAnnasBooks(searchbook):
         desc = info.find("div",class_="truncate text-xs text-gray-500").text.split(",")
 
         book = {}
-        try: book["link"] = 'https://annas-archive.org' + soup.find("a").get("href")
+        try: book["link"] = DOMAIN + soup.find("a").get("href")
         except: pass
         try: book["cover"] = soup.find("img").get("src")
         except: pass
@@ -67,7 +68,7 @@ def getDownLinks(book):
     for ele in soup:
         link = ele.get("href")
         if "/slow_download" == link[:len("/slow_download")]:
-            url = "https://annas-archive.org" + link
+            url = DOMAIN + link
             res = get(url,headers=headers)
             soup = BeautifulSoup(res.content,"html.parser")
             try: links.append(soup.find("p",class_="mb-4").find("a").get("href"))
