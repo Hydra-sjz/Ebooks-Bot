@@ -242,7 +242,7 @@ def getZlibBooks(Z: Zlibrary, search: str):
         return False, resp["error"]
     return True, resp["books"]
 
-def getZlibText(books, choose=0, final=True):
+def getZlibText(books, choose=0, final=False):
     txt =  f'**{books[choose]["title"]}**\n\n__Author: {books[choose]["author"]}\nYear: {books[choose]["year"]}\nVolume: {books[choose]["volume"]}\nEdition: {books[choose]["edition"]}\nLanguage: {books[choose]["language"]}\nPublisher: {books[choose]["publisher"]}\nExtension: {books[choose]["extension"]}\nSize: {books[choose]["filesizeString"]}\npages: {books[choose]["pages"]}\nSeries: {books[choose]["series"]}__' \
     + "\n\n------[Zlibrary]------"
     if not final: txt += f"  [{choose+1}/{len(books)}]"
