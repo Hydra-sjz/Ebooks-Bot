@@ -9,7 +9,7 @@ class Zlibrary:
         self.__kindle_email: str
         self.__remix_userid: Union[int, str]
         self.__remix_userkey: str
-        self.__domain = "singlelogin.se"
+        self.__domain = "singlelogin.re"
         self.__logged = False
 
         self.__headers = {
