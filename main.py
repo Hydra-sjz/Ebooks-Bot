@@ -16,9 +16,9 @@ import json
 with open('config.json', 'r') as f: data = json.load(f)
 def getenv(var): return os.environ.get(var) or data.get(var, None)
 
-bot_token = getenv("TOKEN")
-api_hash = getenv("HASH")
-api_id = getenv("ID")
+bot_token = getenv("BOT_TOKEN")
+api_hash = getenv("API_HASH")
+api_id = getenv("API_ID")
 
 if bot_token is None or api_hash is None or api_id is None:
     print("Required ENVs are not set i.e TOKEN, HASH, ID")
